@@ -86,13 +86,16 @@ const withPillTypes = {
     },
     [badgeTypes.badgeModern]: {
         common: "font-barlow size-max flex items-center whitespace-nowrap rounded-md ring-1 ring-inset shadow-xs",
-        styles: {
-            gray: {
-                root: "bg-primary text-secondary ring-primary",
-                addon: "text-neutral-500",
-                addonButton: "hover:bg-utility-neutral-100 text-utility-neutral-400 hover:text-utility-neutral-500",
-            },
-        },
+        styles: Object.fromEntries(
+            Object.keys(filledColors).map((key) => [
+                key,
+                {
+                    root: "bg-primary text-secondary ring-primary",
+                    addon: "text-neutral-500",
+                    addonButton: "hover:bg-utility-neutral-100 text-utility-neutral-400 hover:text-utility-neutral-500",
+                },
+            ]),
+        ) as Record<BadgeColors, { root: string; addon: string; addonButton: string }>,
     },
 };
 
@@ -126,14 +129,14 @@ export const Badge = <T extends BadgeTypes>(props: BadgeProps<T>) => {
     const colors = withPillTypes[type];
 
     const pillSizes = {
-        sm: "py-0.5 px-2 text-xs font-medium",
-        md: "py-0.5 px-2.5 text-sm font-medium",
-        lg: "py-1 px-3 text-sm font-medium",
+        sm: "py-1.5 px-2 text-xs font-medium",
+        md: "py-2 px-2.5 text-sm font-medium",
+        lg: "py-2 px-3 text-md font-medium",
     };
     const badgeSizes = {
-        sm: "py-0.5 px-1.5 text-xs font-medium",
-        md: "py-0.5 px-2 text-sm font-medium",
-        lg: "py-1 px-2.5 text-sm font-medium rounded-lg",
+        sm: "py-1.5 px-1.5 text-xs font-medium",
+        md: "py-2 px-2 text-sm font-medium",
+        lg: "py-2 px-2.5 text-md font-medium rounded-lg",
     };
 
     const sizes = {
@@ -159,15 +162,15 @@ export const BadgeWithDot = <T extends BadgeTypes>(props: BadgeWithDotProps<T>) 
     const colors = withBadgeTypes[type];
 
     const pillSizes = {
-        sm: "gap-1 py-0.5 pl-1.5 pr-2 text-xs font-medium",
-        md: "gap-1.5 py-0.5 pl-2 pr-2.5 text-sm font-medium",
-        lg: "gap-1.5 py-1 pl-2.5 pr-3 text-sm font-medium",
+        sm: "gap-1 py-1.5 pl-1.5 pr-2 text-xs font-medium",
+        md: "gap-1.5 py-2 pl-2 pr-2.5 text-sm font-medium",
+        lg: "gap-1.5 py-2 pl-2.5 pr-3 text-md font-medium",
     };
 
     const badgeSizes = {
-        sm: "gap-1 py-0.5 px-1.5 text-xs font-medium",
-        md: "gap-1.5 py-0.5 px-2 text-sm font-medium",
-        lg: "gap-1.5 py-1 px-2.5 text-sm font-medium rounded-lg",
+        sm: "gap-1 py-1.5 px-1.5 text-xs font-medium",
+        md: "gap-1.5 py-2 px-2 text-sm font-medium",
+        lg: "gap-1.5 py-2 px-2.5 text-md font-medium rounded-lg",
     };
 
     const sizes = {
@@ -203,30 +206,30 @@ export const BadgeWithIcon = <T extends BadgeTypes>(props: BadgeWithIconProps<T>
 
     const pillSizes = {
         sm: {
-            trailing: "gap-0.5 py-0.5 pl-2 pr-1.5 text-xs font-medium",
-            leading: "gap-0.5 py-0.5 pr-2 pl-1.5 text-xs font-medium",
+            trailing: "gap-0.5 py-1.5 pl-2 pr-1.5 text-xs font-medium",
+            leading: "gap-0.5 py-1.5 pr-2 pl-1.5 text-xs font-medium",
         },
         md: {
-            trailing: "gap-1 py-0.5 pl-2.5 pr-2 text-sm font-medium",
-            leading: "gap-1 py-0.5 pr-2.5 pl-2 text-sm font-medium",
+            trailing: "gap-1 py-2 pl-2.5 pr-2 text-sm font-medium",
+            leading: "gap-1 py-2 pr-2.5 pl-2 text-sm font-medium",
         },
         lg: {
-            trailing: "gap-1 py-1 pl-3 pr-2.5 text-sm font-medium",
-            leading: "gap-1 py-1 pr-3 pl-2.5 text-sm font-medium",
+            trailing: "gap-1 py-2 pl-3 pr-2.5 text-md font-medium",
+            leading: "gap-1 py-2 pr-3 pl-2.5 text-md font-medium",
         },
     };
     const badgeSizes = {
         sm: {
-            trailing: "gap-0.5 py-0.5 pl-2 pr-1.5 text-xs font-medium",
-            leading: "gap-0.5 py-0.5 pr-2 pl-1.5 text-xs font-medium",
+            trailing: "gap-0.5 py-1.5 pl-2 pr-1.5 text-xs font-medium",
+            leading: "gap-0.5 py-1.5 pr-2 pl-1.5 text-xs font-medium",
         },
         md: {
-            trailing: "gap-1 py-0.5 pl-2 pr-1.5 text-sm font-medium",
-            leading: "gap-1 py-0.5 pr-2 pl-1.5 text-sm font-medium",
+            trailing: "gap-1 py-2 pl-2 pr-1.5 text-sm font-medium",
+            leading: "gap-1 py-2 pr-2 pl-1.5 text-sm font-medium",
         },
         lg: {
-            trailing: "gap-1 py-1 pl-2.5 pr-2 text-sm font-medium rounded-lg",
-            leading: "gap-1 py-1 pr-2.5 pl-2 text-sm font-medium rounded-lg",
+            trailing: "gap-1 py-2 pl-2.5 pr-2 text-md font-medium rounded-lg",
+            leading: "gap-1 py-2 pr-2.5 pl-2 text-md font-medium rounded-lg",
         },
     };
 
@@ -259,14 +262,14 @@ export const BadgeWithFlag = <T extends BadgeTypes>(props: BadgeWithFlagProps<T>
     const colors = withPillTypes[type];
 
     const pillSizes = {
-        sm: "gap-1 py-0.5 pl-0.75 pr-2 text-xs font-medium",
-        md: "gap-1.5 py-0.5 pl-1 pr-2.5 text-sm font-medium",
-        lg: "gap-1.5 py-1 pl-1.5 pr-3 text-sm font-medium",
+        sm: "gap-1 py-1.5 pl-0.75 pr-2 text-xs font-medium",
+        md: "gap-1.5 py-2 pl-1 pr-2.5 text-sm font-medium",
+        lg: "gap-1.5 py-2 pl-1.5 pr-3 text-md font-medium",
     };
     const badgeSizes = {
-        sm: "gap-1 py-0.5 pl-1 pr-1.5 text-xs font-medium",
-        md: "gap-1.5 py-0.5 pl-1.5 pr-2 text-sm font-medium",
-        lg: "gap-1.5 py-1 pl-2 pr-2.5 text-sm font-medium rounded-lg",
+        sm: "gap-1 py-1.5 pl-1 pr-1.5 text-xs font-medium",
+        md: "gap-1.5 py-2 pl-1.5 pr-2 text-sm font-medium",
+        lg: "gap-1.5 py-2 pl-2 pr-2.5 text-md font-medium rounded-lg",
     };
 
     const sizes = {
@@ -297,14 +300,14 @@ export const BadgeWithImage = <T extends BadgeTypes>(props: BadgeWithImageProps<
     const colors = withPillTypes[type];
 
     const pillSizes = {
-        sm: "gap-1 py-0.5 pl-0.75 pr-2 text-xs font-medium",
-        md: "gap-1.5 py-0.5 pl-1 pr-2.5 text-sm font-medium",
-        lg: "gap-1.5 py-1 pl-1.5 pr-3 text-sm font-medium",
+        sm: "gap-1 py-1.5 pl-0.75 pr-2 text-xs font-medium",
+        md: "gap-1.5 py-2 pl-1 pr-2.5 text-sm font-medium",
+        lg: "gap-1.5 py-2 pl-1.5 pr-3 text-md font-medium",
     };
     const badgeSizes = {
-        sm: "gap-1 py-0.5 pl-1 pr-1.5 text-xs font-medium",
-        md: "gap-1.5 py-0.5 pl-1.5 pr-2 text-sm font-medium",
-        lg: "gap-1.5 py-1 pl-2 pr-2.5 text-sm font-medium rounded-lg",
+        sm: "gap-1 py-1.5 pl-1 pr-1.5 text-xs font-medium",
+        md: "gap-1.5 py-2 pl-1.5 pr-2 text-sm font-medium",
+        lg: "gap-1.5 py-2 pl-2 pr-2.5 text-md font-medium rounded-lg",
     };
 
     const sizes = {
@@ -343,14 +346,14 @@ export const BadgeWithButton = <T extends BadgeTypes>(props: BadgeWithButtonProp
     const colors = withPillTypes[type];
 
     const pillSizes = {
-        sm: "gap-0.5 py-0.5 pl-2 pr-0.75 text-xs font-medium",
-        md: "gap-0.5 py-0.5 pl-2.5 pr-1 text-sm font-medium",
-        lg: "gap-0.5 py-1 pl-3 pr-1.5 text-sm font-medium",
+        sm: "gap-0.5 py-1.5 pl-2 pr-0.75 text-xs font-medium",
+        md: "gap-0.5 py-2 pl-2.5 pr-1 text-sm font-medium",
+        lg: "gap-0.5 py-2 pl-3 pr-1.5 text-md font-medium",
     };
     const badgeSizes = {
-        sm: "gap-0.5 py-0.5 pl-1.5 pr-0.75 text-xs font-medium",
-        md: "gap-0.5 py-0.5 pl-2 pr-1 text-sm font-medium",
-        lg: "gap-0.5 py-1 pl-2.5 pr-1.5 text-sm font-medium rounded-lg",
+        sm: "gap-0.5 py-1.5 pl-1.5 pr-0.75 text-xs font-medium",
+        md: "gap-0.5 py-2 pl-2 pr-1 text-sm font-medium",
+        lg: "gap-0.5 py-2 pl-2.5 pr-1.5 text-md font-medium rounded-lg",
     };
 
     const sizes = {

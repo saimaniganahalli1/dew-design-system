@@ -31,10 +31,10 @@ export function PlaceholderPage({ section, title, description }: PlaceholderPage
             <path d="M5 5V4a3 3 0 0 1 6 0v1" stroke="var(--color-gray-500)" strokeWidth="1.25" strokeLinecap="round" />
           </svg>
         </div>
-        <p className="text-sm font-medium" style={{ color: "var(--color-gray-500)" }}>
+        <p className="text-sm font-medium text-balance" style={{ color: "var(--color-gray-500)" }}>
           In progress
         </p>
-        <p className="text-xs" style={{ color: "var(--color-gray-400)" }}>
+        <p className="text-xs text-balance" style={{ color: "var(--color-gray-400)" }}>
           This page will be documented as the component is built.
         </p>
       </div>

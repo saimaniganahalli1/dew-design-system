@@ -54,7 +54,7 @@ export default function ShadowsPage() {
         description="Seven elevation levels. Shadows use a single consistent light source at top-centre, matching how Untitled UI models physical depth."
       />
 
-      <h2>Scale</h2>
+      <h2 className="text-balance">Scale</h2>
 
       <div className="grid grid-cols-4 gap-6 mt-6">
         {shadows.map((s) => (
@@ -67,10 +67,10 @@ export default function ShadowsPage() {
               }}
             />
             <div>
-              <p className="text-sm font-medium" style={{ color: "var(--color-gray-800)" }}>
+              <p className="text-sm font-medium text-balance" style={{ color: "var(--color-gray-800)" }}>
                 {s.name}
               </p>
-              <p className="text-xs mt-0.5" style={{ color: "var(--color-gray-400)" }}>
+              <p className="text-xs mt-0.5 text-balance" style={{ color: "var(--color-gray-400)" }}>
                 {s.usage}
               </p>
             </div>
@@ -78,7 +78,7 @@ export default function ShadowsPage() {
         ))}
       </div>
 
-      <h2>Token reference</h2>
+      <h2 className="text-balance">Token reference</h2>
       <table className="token-table mt-4">
         <thead>
           <tr>
@@ -90,15 +90,15 @@ export default function ShadowsPage() {
           {shadows.map((s) => (
             <tr key={s.name}>
               <td><code>{s.token}</code></td>
-              <td style={{ color: "var(--color-gray-500)" }}>{s.usage}</td>
+              <td className="text-balance" style={{ color: "var(--color-gray-500)" }}>{s.usage}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <h2>Usage principles</h2>
-      <p>
-        Elevation implies interactivity and hierarchy. Higher shadows signal more modal or overlay-like behaviour. Don&apos;t stack shadows — pick one level per surface.
+      <h2 className="text-balance">Usage principles</h2>
+      <p className="text-balance">
+        Elevation implies interactivity and hierarchy. Higher shadows signal more modal or overlay-like behaviour. Don&apos;t stack shadows - pick one level per surface.
       </p>
     </div>
   );

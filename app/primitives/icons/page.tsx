@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
-import { Home01, Bell01, SearchLg } from "@untitledui/icons";
+import { Home01, Bell01, SearchLg, CheckCircle } from "@untitledui/icons";
 import * as UntitledIcons from "@untitledui/icons";
+import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
 
 const sizeDemo = [
   { name: "xs", size: 12, token: "size-3" },
@@ -19,9 +20,37 @@ const strokeDemo = [
   { name: "Medium",   stroke: 2,    note: "Emphasis, small sizes" },
 ];
 
+// Pulled directly from FeaturedIconProps in components/foundations/featured-icon/featured-icon.tsx.
+// Matches Figma's "Featured icon" frame (node 97:16118) exactly - sm/md/lg/xl at
+// 32/40/48/56px, light/gradient/dark/modern/modern-neue themes, brand/gray/error/
+// warning/success colours - plus the separate "Featured icon outline" frame
+// (node 97:16339), which is FeaturedIcon's own `outline` theme.
+const featuredIconThemes = [
+  { key: "light", label: "Light" },
+  { key: "gradient", label: "Gradient" },
+  { key: "dark", label: "Dark" },
+  { key: "modern", label: "Modern" },
+  { key: "modern-neue", label: "Modern neue" },
+] as const;
+
+const featuredIconColors = [
+  { key: "brand", label: "Brand" },
+  { key: "gray", label: "Gray" },
+  { key: "error", label: "Error" },
+  { key: "warning", label: "Warning" },
+  { key: "success", label: "Success" },
+] as const;
+
+const featuredIconSizes = [
+  { key: "sm", label: "sm", px: 32 },
+  { key: "md", label: "md", px: 40 },
+  { key: "lg", label: "lg", px: 48 },
+  { key: "xl", label: "xl", px: 56 },
+] as const;
+
 const allIcons = Object.entries(UntitledIcons)
   .filter(([, value]) => typeof value === "function")
-  .map(([name, Icon]) => ({ name, Icon: Icon as React.ComponentType<{ size?: number; strokeWidth?: number; style?: React.CSSProperties }> }))
+  .map(([name, Icon]) => ({ name, Icon: Icon as React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }> }))
   .sort((a, b) => a.name.localeCompare(b.name));
 
 const PAGE_SIZE = 120;
@@ -37,7 +66,7 @@ export default function IconsPage() {
     return allIcons.filter((i) => i.name.toLowerCase().includes(q));
   }, [query]);
 
-  // Only mount `visibleCount` icons at a time — rendering all 1,179 SVGs
+  // Only mount `visibleCount` icons at a time - rendering all 1,179 SVGs
   // up front adds real hydration weight for no benefit until searched/scrolled to.
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
@@ -59,85 +88,106 @@ export default function IconsPage() {
       <PageHeader
         section="Primitives"
         title="Icons"
-        description="DEW uses Untitled UI Icons — the same set every pulled component (Button, Badge, Checkbox, Input) draws from. All icons share the same geometric foundation, stroke weight, and optical sizing."
+        description="DEW uses Untitled UI Icons - the same set every pulled component (Button, Badge, Checkbox, Input) draws from. All icons share the same geometric foundation, stroke weight, and optical sizing."
       />
 
-      <h2>Sizes</h2>
-      <p>Match icon size to text size. A 14px label pairs with a 16px (sm) icon; a 16px label with a 20px (md) icon.</p>
+      <h2 className="text-balance">Sizes</h2>
+      <p className="text-balance">Match icon size to text size. A 14px label pairs with a 16px (sm) icon; a 16px label with a 20px (md) icon.</p>
 
-      <div className="flex items-end gap-8 mt-6 p-6 rounded-xl"
-        style={{ border: "1px solid var(--color-gray-200)", background: "var(--color-gray-25)" }}
-      >
+      <div className="mt-6 flex items-end gap-8 rounded-xl border border-secondary bg-primary_alt p-6">
         {sizeDemo.map((s) => (
           <div key={s.name} className="flex flex-col items-center gap-3">
-            <Home01 size={s.size} style={{ color: "var(--color-gray-700)" }} />
+            <Home01 size={s.size} className="text-secondary" />
             <div className="text-center">
-              <p className="text-xs font-medium" style={{ color: "var(--color-gray-700)" }}>{s.name}</p>
+              <p className="text-xs font-medium text-secondary text-balance">{s.name}</p>
               <code className="text-xs">{s.size}px</code>
             </div>
           </div>
         ))}
       </div>
 
-      <h2>Stroke weight</h2>
-      <p>Default stroke is 1.5. Use 1 for decorative/display contexts, 2 for small sizes or emphasis.</p>
+      <h2 className="text-balance">Stroke weight</h2>
+      <p className="text-balance">Default stroke is 1.5. Use 1 for decorative/display contexts, 2 for small sizes or emphasis.</p>
 
-      <div className="flex gap-10 mt-6 p-6 rounded-xl"
-        style={{ border: "1px solid var(--color-gray-200)", background: "var(--color-gray-25)" }}
-      >
+      <div className="mt-6 flex gap-10 rounded-xl border border-secondary bg-primary_alt p-6">
         {strokeDemo.map((s) => (
           <div key={s.name} className="flex flex-col items-center gap-3">
-            <Bell01 size={24} strokeWidth={s.stroke} style={{ color: "var(--color-gray-700)" }} />
+            <Bell01 size={24} strokeWidth={s.stroke} className="text-secondary" />
             <div className="text-center">
-              <p className="text-xs font-medium" style={{ color: "var(--color-gray-700)" }}>{s.name}</p>
+              <p className="text-xs font-medium text-secondary text-balance">{s.name}</p>
               <code className="text-xs">{s.stroke}</code>
-              <p className="text-xs mt-0.5" style={{ color: "var(--color-gray-400)" }}>{s.note}</p>
+              <p className="mt-0.5 text-xs text-quaternary text-balance">{s.note}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <h2>Icon library</h2>
-      <p>
+      {/* ── Featured icons ── */}
+      <h2 className="text-balance">Featured icons</h2>
+      <p className="text-balance">
+        A glyph in a styled container - used for empty states, alerts, and onboarding. Real DEW component: <code>FeaturedIcon</code> from{" "}
+        <code>components/foundations/featured-icon/featured-icon.tsx</code>. Matches Figma&apos;s &quot;Featured icon&quot; frame exactly.
+      </p>
+
+      <div className="mt-6 flex flex-col gap-4 rounded-xl border border-secondary bg-primary_alt p-6">
+        <p className="text-xs font-semibold text-quaternary uppercase tracking-widest text-balance">Theme × colour (md)</p>
+        <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${featuredIconColors.length}, minmax(0, 1fr))` }}>
+          {featuredIconThemes.map((theme) => (
+            <div key={theme.key} className="contents">
+              {featuredIconColors.map((color) => (
+                <div key={`${theme.key}-${color.key}`} className="flex flex-col items-center gap-2">
+                  <FeaturedIcon theme={theme.key} color={color.key} size="md" icon={CheckCircle} />
+                  {theme.key === "light" && <code className="text-xs text-quaternary">{color.label}</code>}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="mt-2 grid gap-4 border-t border-secondary pt-4" style={{ gridTemplateColumns: `repeat(${featuredIconColors.length}, minmax(0, 1fr))` }}>
+          {featuredIconThemes.map((theme) => (
+            <code key={theme.key} className="text-center text-xs text-quaternary">{theme.label}</code>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-end gap-6 rounded-xl border border-secondary bg-primary_alt p-6">
+        <p className="w-full text-xs font-semibold text-quaternary uppercase tracking-widest text-balance">Sizes (light / brand)</p>
+        {featuredIconSizes.map((s) => (
+          <div key={s.key} className="flex flex-col items-center gap-2">
+            <FeaturedIcon theme="light" color="brand" size={s.key} icon={CheckCircle} />
+            <code className="text-xs text-quaternary">{s.label} · {s.px}px</code>
+          </div>
+        ))}
+      </div>
+
+      <p className="mt-6 text-balance">The <code>outline</code> theme is its own frame in Figma (&quot;Featured icon outline&quot;) - no background, just a soft double ring.</p>
+      <div className="mt-4 flex flex-wrap items-end gap-6 rounded-xl border border-secondary bg-primary_alt p-6">
+        {featuredIconColors.map((color) => (
+          <div key={color.key} className="flex flex-col items-center gap-2">
+            <FeaturedIcon theme="outline" color={color.key} size="lg" icon={CheckCircle} />
+            <code className="text-xs text-quaternary">{color.label}</code>
+          </div>
+        ))}
+      </div>
+
+      <h2 className="text-balance">Icon library</h2>
+      <p className="text-balance">
         All {allIcons.length.toLocaleString()} icons from <code>@untitledui/icons</code>. Search by name, click any icon to copy its import statement.
       </p>
 
       {/* Search */}
-      <div className="sticky top-0 z-10 mt-4 mb-4 py-3" style={{ background: "var(--bg-page)" }}>
+      <div className="sticky top-0 z-10 mt-4 mb-4 bg-primary_alt py-3">
         <div className="relative max-w-sm">
-          <SearchLg
-            size={16}
-            style={{
-              position: "absolute",
-              left: 12,
-              top: "50%",
-              transform: "translateY(-50%)",
-              color: "var(--color-gray-400)",
-              pointerEvents: "none",
-            }}
-          />
+          <SearchLg size={16} className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-quaternary" />
           <input
             type="text"
             value={query}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="Search icons…"
-            style={{
-              width: "100%",
-              height: 40,
-              paddingLeft: 38,
-              paddingRight: 12,
-              fontSize: 14,
-              borderRadius: "var(--radius-md)",
-              border: "1px solid var(--color-gray-300)",
-              background: "white",
-              color: "var(--color-gray-900)",
-              outline: "none",
-              boxShadow: "var(--shadow-xs)",
-              fontFamily: "inherit",
-            }}
+            className="h-10 w-full rounded-lg border border-primary bg-primary pr-3 pl-9.5 text-sm text-primary shadow-xs outline-none"
           />
         </div>
-        <p className="text-xs mt-2" style={{ color: "var(--color-gray-400)" }}>
+        <p className="mt-2 text-xs text-quaternary text-balance">
           Showing {visible.length.toLocaleString()} of {filtered.length.toLocaleString()} icons
           {filtered.length !== allIcons.length && ` (filtered from ${allIcons.length.toLocaleString()})`}
         </p>
@@ -145,34 +195,18 @@ export default function IconsPage() {
 
       {/* Grid */}
       {visible.length > 0 ? (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(84px, 1fr))",
-            gap: "8px",
-          }}
-        >
+        <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(84px, 1fr))" }}>
           {visible.map(({ name, Icon }) => (
             <button
               key={name}
               onClick={() => handleCopy(name)}
               title={`Copy: import { ${name} } from "@untitledui/icons";`}
-              className="flex flex-col items-center gap-1.5 p-3 rounded-lg cursor-pointer transition-colors"
-              style={{
-                border: "1px solid var(--color-gray-200)",
-                background: copied === name ? "var(--color-brand-50)" : "var(--color-gray-25)",
-              }}
+              className={`flex cursor-pointer flex-col items-center gap-1.5 rounded-lg border p-3 transition-colors ${
+                copied === name ? "border-secondary bg-brand-secondary" : "border-secondary bg-primary_alt"
+              }`}
             >
-              <Icon size={20} strokeWidth={1.5} style={{ color: copied === name ? "var(--color-brand-600)" : "var(--color-gray-600)" }} />
-              <code
-                className="text-xs text-center"
-                style={{
-                  color: copied === name ? "var(--color-brand-600)" : "var(--color-gray-400)",
-                  fontSize: "10px",
-                  wordBreak: "break-word",
-                  lineHeight: 1.3,
-                }}
-              >
+              <Icon size={20} strokeWidth={1.5} className={copied === name ? "text-brand-tertiary" : "text-tertiary"} />
+              <code className={`text-center text-[10px] leading-tight break-words ${copied === name ? "text-brand-tertiary" : "text-quaternary"}`}>
                 {copied === name ? "Copied!" : name}
               </code>
             </button>
@@ -181,34 +215,20 @@ export default function IconsPage() {
       ) : null}
 
       {hasMore && (
-        <div className="flex justify-center mt-6">
+        <div className="mt-6 flex justify-center">
           <button
             onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-            className="cursor-pointer"
-            style={{
-              padding: "8px 16px",
-              fontSize: 14,
-              fontWeight: 500,
-              borderRadius: "var(--radius-md)",
-              border: "1px solid var(--color-gray-300)",
-              background: "white",
-              color: "var(--color-gray-700)",
-              boxShadow: "var(--shadow-xs)",
-              fontFamily: "inherit",
-            }}
+            className="cursor-pointer rounded-lg border border-primary bg-primary px-4 py-2 text-sm font-medium text-secondary shadow-xs text-balance"
           >
             Load {Math.min(PAGE_SIZE, filtered.length - visibleCount).toLocaleString()} more
-            <span style={{ color: "var(--color-gray-400)" }}> · {(filtered.length - visibleCount).toLocaleString()} remaining</span>
+            <span className="text-quaternary text-balance"> · {(filtered.length - visibleCount).toLocaleString()} remaining</span>
           </button>
         </div>
       )}
 
       {visible.length === 0 && (
-        <div
-          className="flex flex-col items-center justify-center py-16 rounded-xl"
-          style={{ border: "1.5px dashed var(--color-gray-300)", background: "var(--color-gray-50)" }}
-        >
-          <p className="text-sm font-medium" style={{ color: "var(--color-gray-500)" }}>
+        <div className="flex flex-col items-center justify-center rounded-xl border-[1.5px] border-dashed border-primary bg-secondary py-16">
+          <p className="text-sm font-medium text-quaternary text-balance">
             No icons match &ldquo;{query}&rdquo;
           </p>
         </div>

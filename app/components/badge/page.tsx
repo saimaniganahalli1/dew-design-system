@@ -1,34 +1,49 @@
 "use client";
 
+import { useState } from "react";
 import type React from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { Badge, BadgeWithDot, BadgeWithIcon, BadgeWithButton, BadgeIcon } from "@/components/base/badges/badges";
 import { BadgeGroup } from "@/components/base/badges/badge-groups";
+import { ContextualConfigPanel } from "@/components/ContextualConfigPanel";
 import { Star01, Check, Zap } from "@untitledui/icons";
-import type { BadgeColors, BadgeTypes } from "@/components/base/badges/badge-types";
+import type { BadgeColors, BadgeTypes, Sizes } from "@/components/base/badges/badge-types";
+import {
+  ScaffoldLabel,
+  ScaffoldTextInput,
+  SegmentedControl,
+} from "@/components/scaffold/controls";
 import { enabledVariants, isFeatureEnabled } from "@/config/design-system.config";
 import { useConfig } from "@/lib/config-context";
 
 const Section = ({ label, children }: { label: string; children: React.ReactNode }) => (
-  <div
-    className="rounded-xl p-6 flex flex-wrap items-center gap-2.5"
-    style={{ border: "1px solid var(--color-gray-200)", background: "var(--color-gray-50)" }}
-  >
-    <p className="w-full text-xs font-semibold uppercase tracking-widest mb-1"
-      style={{ color: "var(--color-gray-400)" }}
-    >
+  <div className="flex flex-wrap items-center gap-6 rounded-xl border border-secondary bg-secondary p-6">
+    <p className="mb-1 w-full text-xs font-semibold text-quaternary uppercase tracking-widest text-balance">
       {label}
     </p>
     {children}
   </div>
 );
 
+const sectionToggles = [
+  { key: "playground", label: "Component Playground" },
+  { key: "withDot", label: "With dot" },
+  { key: "withIcon", label: "With icon" },
+  { key: "iconOnly", label: "Icon only" },
+  { key: "withButton", label: "With dismiss button" },
+  { key: "group", label: "Badge group" },
+  { key: "usage", label: "Usage" },
+  { key: "figma", label: "Figma" },
+];
+
 const props = [
   { name: "type",     type: '"pill-color" | "color" | "modern"', default: '"pill-color"' },
   { name: "size",     type: '"sm" | "md" | "lg"',                default: '"md"' },
   { name: "color",    type: "BadgeColors (12 options)",          default: '"gray"' },
-  { name: "children", type: "ReactNode",                          default: "—" },
+  { name: "children", type: "ReactNode",                          default: "-" },
 ];
+
+type PlaygroundStyle = "plain" | "dot" | "icon" | "button";
 
 export default function BadgePage() {
   const { config: liveConfig } = useConfig();
@@ -37,36 +52,160 @@ export default function BadgePage() {
   const colors = enabledVariants(config.colors);
   const sizes = enabledVariants(config.sizes);
 
+  const defaults = {
+    type: "pill-color" as BadgeTypes,
+    color: "brand" as BadgeColors,
+    size: "md" as Sizes,
+    label: "Badge",
+    style: "plain" as PlaygroundStyle,
+  };
+
+  const [previewType, setPreviewType] = useState(defaults.type);
+  const [previewColor, setPreviewColor] = useState(defaults.color);
+  const [previewSize, setPreviewSize] = useState(defaults.size);
+  const [previewLabel, setPreviewLabel] = useState(defaults.label);
+  const [previewStyle, setPreviewStyle] = useState(defaults.style);
+
+  const isDefault =
+    previewType === defaults.type &&
+    previewColor === defaults.color &&
+    previewSize === defaults.size &&
+    previewLabel === defaults.label &&
+    previewStyle === defaults.style;
+
+  const resetPreview = () => {
+    setPreviewType(defaults.type);
+    setPreviewColor(defaults.color);
+    setPreviewSize(defaults.size);
+    setPreviewLabel(defaults.label);
+    setPreviewStyle(defaults.style);
+  };
+
   return (
     <div className="prose-doc">
       <PageHeader
         section="Components"
         title="Badge"
         description="A compact, non-interactive status label. Types, colours, sizes, and demo sections are all driven from config/design-system.config.ts."
+        actions={<ContextualConfigPanel slug="badge" title="Badge" sections={sectionToggles} />}
       />
+
+      {/* ── Component Playground ── */}
+      {isFeatureEnabled(config, "playground") && (
+        <>
+          <h2 className="text-balance">Component Playground</h2>
+          <p className="text-balance">Live instance - the controls read their options from the same config that drives the Variants section below.</p>
+          <div className="overflow-hidden rounded-2xl border border-secondary shadow-xs">
+            <div className="grid md:grid-cols-[1fr_300px]">
+              <div
+                className="relative flex min-h-[320px] flex-col items-center justify-center gap-3 bg-primary_alt p-12"
+                style={{
+                  backgroundImage: "radial-gradient(var(--ui-border-secondary) 1px, transparent 1px)",
+                  backgroundSize: "20px 20px",
+                }}
+              >
+                <div className="flex min-h-16 items-center justify-center rounded-xl bg-primary px-8 py-6 shadow-md">
+                  {previewStyle === "dot" && (
+                    <BadgeWithDot type={previewType} color={previewColor} size={previewSize}>
+                      {previewLabel}
+                    </BadgeWithDot>
+                  )}
+                  {previewStyle === "icon" && (
+                    <BadgeWithIcon type={previewType} color={previewColor} size={previewSize} iconLeading={Star01}>
+                      {previewLabel}
+                    </BadgeWithIcon>
+                  )}
+                  {previewStyle === "button" && (
+                    <BadgeWithButton type={previewType} color={previewColor} size={previewSize} buttonLabel="Remove">
+                      {previewLabel}
+                    </BadgeWithButton>
+                  )}
+                  {previewStyle === "plain" && (
+                    <Badge type={previewType} color={previewColor} size={previewSize}>
+                      {previewLabel}
+                    </Badge>
+                  )}
+                </div>
+                <code className="text-xs text-quaternary">
+                  {previewType} · {previewColor} · {previewSize}
+                </code>
+              </div>
+
+              <div className="flex flex-col gap-5 border-l border-secondary bg-primary p-6">
+                <div className="flex items-baseline justify-between">
+                  <p className="text-xs font-semibold text-quaternary uppercase tracking-widest text-balance">
+                    Controls
+                  </p>
+                  <button
+                    type="button"
+                    onClick={resetPreview}
+                    disabled={isDefault}
+                    className="text-xs font-medium text-brand-secondary transition-opacity hover:text-brand-secondary_hover disabled:opacity-40"
+                  >
+                    Reset
+                  </button>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <ScaffoldLabel>Type</ScaffoldLabel>
+                  <SegmentedControl
+                    options={types.map((t) => ({ key: t.key as BadgeTypes, label: t.label }))}
+                    value={previewType}
+                    onChange={setPreviewType}
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <ScaffoldLabel>Style</ScaffoldLabel>
+                  <SegmentedControl
+                    options={[
+                      { key: "plain" as const, label: "Plain" },
+                      { key: "dot" as const, label: "Dot" },
+                      { key: "icon" as const, label: "Icon" },
+                      { key: "button" as const, label: "Button" },
+                    ]}
+                    value={previewStyle}
+                    onChange={setPreviewStyle}
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <ScaffoldLabel>Size</ScaffoldLabel>
+                  <SegmentedControl
+                    options={sizes.map((s) => ({ key: s.key as Sizes, label: s.key }))}
+                    value={previewSize}
+                    onChange={setPreviewSize}
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <ScaffoldLabel>Colour</ScaffoldLabel>
+                  <SegmentedControl
+                    options={colors.map((c) => ({ key: c.key as BadgeColors, label: c.label }))}
+                    value={previewColor}
+                    onChange={setPreviewColor}
+                  />
+                </div>
+
+                <ScaffoldTextInput label="Label" value={previewLabel} onChange={setPreviewLabel} />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* ── Types ── */}
       {types.length > 0 && (
         <>
-          <h2>Types</h2>
-          <p>Three shapes: <code>pill-color</code> (fully rounded), <code>color</code> (soft rounded rectangle), and <code>modern</code> (neutral surface with a shadow, colour carried by the addon only).</p>
+          <h2 className="text-balance">Types</h2>
+          <p className="text-balance">Two shapes: <code>pill-color</code> (fully rounded) and <code>color</code> (soft rounded rectangle).</p>
 
           <div className="flex flex-col gap-4 mt-4">
             {types.map((t) => (
               <Section key={t.key} label={t.label}>
-                {t.key === "modern" ? (
-                  <>
-                    <Badge type="modern" color="gray">Modern</Badge>
-                    <BadgeWithDot type="modern" color="brand">In progress</BadgeWithDot>
-                    <BadgeWithDot type="modern" color="success">Complete</BadgeWithDot>
-                  </>
-                ) : (
-                  <>
-                    <Badge type={t.key as BadgeTypes} color="brand">Badge</Badge>
-                    <Badge type={t.key as BadgeTypes} color="success">Active</Badge>
-                    <Badge type={t.key as BadgeTypes} color="error">Failed</Badge>
-                  </>
-                )}
+                <Badge type={t.key as BadgeTypes} color="brand">Badge</Badge>
+                <Badge type={t.key as BadgeTypes} color="success">Active</Badge>
+                <Badge type={t.key as BadgeTypes} color="error">Failed</Badge>
               </Section>
             ))}
           </div>
@@ -76,10 +215,10 @@ export default function BadgePage() {
       {/* ── Colours ── */}
       {colors.length > 0 && (
         <>
-          <h2>Colours</h2>
-          <p>Use <code>gray</code>, <code>brand</code>, <code>error</code>, <code>warning</code>, and <code>success</code> for status; the rest for categorisation and tagging.</p>
+          <h2 className="text-balance">Colours</h2>
+          <p className="text-balance">Use <code>gray</code> for neutral status, <code>brand</code> for informational, and <code>error</code>/<code>warning</code>/<code>success</code> for outcome status.</p>
 
-          <Section label="All colours — pill-color">
+          <Section label="All colours - pill-color">
             {colors.map((c) => (
               <Badge key={c.key} type="pill-color" color={c.key as BadgeColors}>{c.label}</Badge>
             ))}
@@ -90,10 +229,10 @@ export default function BadgePage() {
       {/* ── Sizes ── */}
       {sizes.length > 0 && (
         <>
-          <h2>Sizes</h2>
+          <h2 className="text-balance">Sizes</h2>
           <Section label={sizes.map((s) => s.label).join(" / ")}>
             {sizes.map((s) => (
-              <Badge key={s.key} size={s.key as "sm" | "md" | "lg"} color="brand">{s.label}</Badge>
+              <Badge key={s.key} size={s.key as Sizes} color="brand">{s.label}</Badge>
             ))}
           </Section>
         </>
@@ -102,8 +241,8 @@ export default function BadgePage() {
       {/* ── With dot ── */}
       {isFeatureEnabled(config, "withDot") && (
         <>
-          <h2>With dot</h2>
-          <p>A leading status dot — most common for live/active states.</p>
+          <h2 className="text-balance">With dot</h2>
+          <p className="text-balance">A leading status dot - most common for live/active states.</p>
           <Section label="Dot indicator">
             <BadgeWithDot color="success">Online</BadgeWithDot>
             <BadgeWithDot color="gray">Offline</BadgeWithDot>
@@ -116,8 +255,8 @@ export default function BadgePage() {
       {/* ── With icon ── */}
       {isFeatureEnabled(config, "withIcon") && (
         <>
-          <h2>With icon</h2>
-          <p>Leading or trailing icon, passed as an <code>@untitledui/icons</code> component.</p>
+          <h2 className="text-balance">With icon</h2>
+          <p className="text-balance">Leading or trailing icon, passed as an <code>@untitledui/icons</code> component.</p>
           <Section label="Icon leading / trailing">
             <BadgeWithIcon color="brand" iconLeading={Star01}>Featured</BadgeWithIcon>
             <BadgeWithIcon color="success" iconLeading={Check}>Verified</BadgeWithIcon>
@@ -129,7 +268,7 @@ export default function BadgePage() {
       {/* ── Icon only ── */}
       {isFeatureEnabled(config, "iconOnly") && (
         <>
-          <h2>Icon only</h2>
+          <h2 className="text-balance">Icon only</h2>
           <Section label="No label">
             <BadgeIcon color="brand" icon={Star01} />
             <BadgeIcon color="success" icon={Check} />
@@ -141,8 +280,8 @@ export default function BadgePage() {
       {/* ── With dismiss button ── */}
       {isFeatureEnabled(config, "withButton") && (
         <>
-          <h2>With dismiss button</h2>
-          <p>An inline close button — used for removable filters and selected tags.</p>
+          <h2 className="text-balance">With dismiss button</h2>
+          <p className="text-balance">An inline close button - used for removable filters and selected tags.</p>
           <Section label="Dismissible">
             <BadgeWithButton color="brand" buttonLabel="Remove">Design</BadgeWithButton>
             <BadgeWithButton color="gray" buttonLabel="Remove">Engineering</BadgeWithButton>
@@ -154,8 +293,8 @@ export default function BadgePage() {
       {/* ── Badge group ── */}
       {isFeatureEnabled(config, "group") && (
         <>
-          <h2>Badge group</h2>
-          <p>A badge with an attached addon label — used to pair a metric with its context, e.g. a trend value next to a description.</p>
+          <h2 className="text-balance">Badge group</h2>
+          <p className="text-balance">A badge with an attached addon label - used to pair a metric with its context, e.g. a trend value next to a description.</p>
           <Section label="Leading / trailing addon">
             <BadgeGroup addonText="New" color="brand">12 updates</BadgeGroup>
             <BadgeGroup addonText="+40%" color="success" align="trailing">Conversion rate</BadgeGroup>
@@ -165,7 +304,7 @@ export default function BadgePage() {
       )}
 
       {/* ── API ── */}
-      <h2>API</h2>
+      <h2 className="text-balance">API</h2>
       <table className="token-table mt-4">
         <thead>
           <tr>
@@ -186,8 +325,8 @@ export default function BadgePage() {
       </table>
 
       {/* ── Token anatomy ── */}
-      <h2>Token anatomy</h2>
-      <p>Badge colours pull from a separate <strong>utility colour</strong> scale (distinct from the primitive Brand/Error/Warning/Success palette) — a wider set of 50/100/200/500/700 steps built for badges, tags, and avatars.</p>
+      <h2 className="text-balance">Token anatomy</h2>
+      <p className="text-balance">Badge colours pull from a separate <strong>utility colour</strong> scale (distinct from the primitive Brand/Error/Warning/Success palette) - a wider set of 50/100/200/500/700 steps built for badges, tags, and avatars.</p>
       <table className="token-table mt-4">
         <thead>
           <tr>
@@ -214,6 +353,28 @@ export default function BadgePage() {
           ))}
         </tbody>
       </table>
+
+      {/* ── Usage ── */}
+      {isFeatureEnabled(config, "usage") && (
+        <>
+          <h2 className="text-balance">Usage</h2>
+          <pre className="overflow-x-auto rounded-xl border border-secondary bg-secondary p-5">
+            <code className="font-mono text-[13px] text-secondary">
+{`import { Badge } from "@/components/base/badges/badges";
+
+<Badge type="pill-color" color="success">Active</Badge>`}
+            </code>
+          </pre>
+        </>
+      )}
+
+      {/* ── Figma ── */}
+      {isFeatureEnabled(config, "figma") && (
+        <>
+          <h2 className="text-balance">Figma</h2>
+          <p className="text-balance">No linked Figma file yet - this component was pulled in via the Untitled UI CLI, not designed in Figma first.</p>
+        </>
+      )}
     </div>
   );
 }

@@ -7,36 +7,54 @@ const palettes: { name: string; description: string; swatches: Swatch[] }[] = [
     name: "Gray",
     description: "Neutral scale used for text, borders, backgrounds, and surface layers.",
     swatches: [
-      { step: "25",  hex: "#FCFCFD", textDark: true },
-      { step: "50",  hex: "#F9FAFB", textDark: true },
-      { step: "100", hex: "#F2F4F7", textDark: true },
-      { step: "200", hex: "#EAECF0", textDark: true },
-      { step: "300", hex: "#D0D5DD", textDark: true },
-      { step: "400", hex: "#98A2B3", textDark: true },
-      { step: "500", hex: "#667085" },
-      { step: "600", hex: "#475467" },
-      { step: "700", hex: "#344054" },
-      { step: "800", hex: "#1D2939" },
-      { step: "900", hex: "#101828" },
+      { step: "25",  hex: "#FCFCFC", textDark: true },
+      { step: "50",  hex: "#F8F8F7", textDark: true },
+      { step: "100", hex: "#F2F2F1", textDark: true },
+      { step: "200", hex: "#E5E4E2", textDark: true },
+      { step: "300", hex: "#D2D0CE", textDark: true },
+      { step: "400", hex: "#B5B2AF", textDark: true },
+      { step: "500", hex: "#8F8B87" },
+      { step: "600", hex: "#706B68" },
+      { step: "700", hex: "#585451" },
+      { step: "800", hex: "#423E3B" },
+      { step: "900", hex: "#2E2925" },
       { step: "950", hex: "#0C111D" },
     ],
   },
   {
     name: "Brand",
-    description: "Primary brand colour. Replace with DEW's brand hex values.",
+    description: "Primary brand colour - DEW Marine Teal.",
     swatches: [
-      { step: "25",  hex: "#F5F8FF", textDark: true },
-      { step: "50",  hex: "#EFF4FF", textDark: true },
-      { step: "100", hex: "#D1E0FF", textDark: true },
-      { step: "200", hex: "#B2CCFF", textDark: true },
-      { step: "300", hex: "#84ADFF", textDark: true },
-      { step: "400", hex: "#528BFF" },
-      { step: "500", hex: "#2970FF" },
-      { step: "600", hex: "#155EEF" },
-      { step: "700", hex: "#004EEB" },
-      { step: "800", hex: "#0040C1" },
-      { step: "900", hex: "#00359E" },
-      { step: "950", hex: "#002266" },
+      { step: "25",  hex: "#F6FBFC", textDark: true },
+      { step: "50",  hex: "#EDF7F9", textDark: true },
+      { step: "100", hex: "#DCECEF", textDark: true },
+      { step: "200", hex: "#C3D9DF", textDark: true },
+      { step: "300", hex: "#9CA9B3", textDark: true },
+      { step: "400", hex: "#4D788A" },
+      { step: "500", hex: "#2A667C" },
+      { step: "600", hex: "#185E74" },
+      { step: "700", hex: "#0D576E" },
+      { step: "800", hex: "#0A485A" },
+      { step: "900", hex: "#073542" },
+      { step: "950", hex: "#041E27" },
+    ],
+  },
+  {
+    name: "Secondary",
+    description: "Secondary brand colour - DEW Seagrass Green. Used sparingly, as an accent to Brand - pills, alerts, and labels. Coded as \"accent\" (--color-accent-*) to avoid colliding with the neutral bg-secondary/text-secondary hierarchy tokens below.",
+    swatches: [
+      { step: "25",  hex: "#F7FBFB", textDark: true },
+      { step: "50",  hex: "#EEF6F6", textDark: true },
+      { step: "100", hex: "#DEEAEA", textDark: true },
+      { step: "200", hex: "#C9DBDB", textDark: true },
+      { step: "300", hex: "#B6C7C7", textDark: true },
+      { step: "400", hex: "#80A9A9", textDark: true },
+      { step: "500", hex: "#649898" },
+      { step: "600", hex: "#568F8F" },
+      { step: "700", hex: "#4A8C8C" },
+      { step: "800", hex: "#3B7272" },
+      { step: "900", hex: "#2A5555" },
+      { step: "950", hex: "#162D2D" },
     ],
   },
   {
@@ -112,14 +130,14 @@ export default function ColorsPage() {
       <PageHeader
         section="Primitives"
         title="Colours"
-        description="A 12-step scale for each semantic role. Token names follow Untitled UI conventions — swap the CSS custom property values to establish DEW's colour identity."
+        description="A 12-step scale for each semantic role. Token names follow Untitled UI conventions - swap the CSS custom property values to establish DEW's colour identity."
       />
 
       {/* Palette grid */}
       {palettes.map((palette) => (
         <div key={palette.name} className="mb-12">
-          <h2>{palette.name}</h2>
-          <p>{palette.description}</p>
+          <h2 className="text-balance">{palette.name}</h2>
+          <p className="text-balance">{palette.description}</p>
           <div className="grid grid-cols-12 gap-1.5 mt-4">
             {palette.swatches.map((s) => (
               <div key={s.step} className="flex flex-col gap-1.5">
@@ -127,7 +145,7 @@ export default function ColorsPage() {
                   className="h-12 w-full rounded-md"
                   style={{ background: s.hex }}
                 />
-                <p className="text-xs font-medium" style={{ color: "var(--color-gray-700)" }}>
+                <p className="text-xs font-medium text-balance" style={{ color: "var(--color-gray-700)" }}>
                   {s.step}
                 </p>
                 <p className="text-xs font-mono" style={{ color: "var(--color-gray-400)" }}>
@@ -140,8 +158,8 @@ export default function ColorsPage() {
       ))}
 
       {/* Semantic tokens */}
-      <h2>Semantic tokens</h2>
-      <p>Aliases that map raw palette steps to UI roles. Use these in components — never raw palette values.</p>
+      <h2 className="text-balance">Semantic tokens</h2>
+      <p className="text-balance">Aliases that map raw palette steps to UI roles. Use these in components - never raw palette values.</p>
       <table className="token-table mt-4">
         <thead>
           <tr>
@@ -155,7 +173,7 @@ export default function ColorsPage() {
             <tr key={t.token}>
               <td><code>{t.token}</code></td>
               <td><code>{t.value}</code></td>
-              <td style={{ color: "var(--color-gray-500)" }}>{t.usage}</td>
+              <td className="text-balance" style={{ color: "var(--color-gray-500)" }}>{t.usage}</td>
             </tr>
           ))}
         </tbody>

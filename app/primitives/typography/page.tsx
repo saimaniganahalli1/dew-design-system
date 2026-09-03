@@ -30,8 +30,8 @@ export default function TypographyPage() {
         description="Type scale and weight system based on Untitled UI conventions. Heading sizes use negative letter-spacing for optical tightening."
       />
 
-      <h2>Type scale</h2>
-      <p>Sizes follow a modular scale. Display sizes are used for headings; text sizes for body and UI copy.</p>
+      <h2 className="text-balance">Type scale</h2>
+      <p className="text-balance">Sizes follow a modular scale. Display sizes are used for headings; text sizes for body and UI copy.</p>
 
       <div className="flex flex-col gap-1 mt-6">
         {typeScale.map((t) => (
@@ -41,7 +41,7 @@ export default function TypographyPage() {
             style={{ borderBottom: "1px solid var(--color-gray-100)" }}
           >
             <div style={{ width: "200px", flexShrink: 0 }}>
-              <p className="font-barlow" style={{
+              <p className="font-barlow text-balance" style={{
                 fontSize: t.size,
                 lineHeight: t.lineHeight,
                 fontWeight: parseInt(t.weight) || 600,
@@ -56,19 +56,19 @@ export default function TypographyPage() {
             </div>
             <div className="flex-1 grid grid-cols-4 gap-4 items-center">
               <div>
-                <p className="text-xs mb-0.5" style={{ color: "var(--color-gray-400)" }}>Name</p>
-                <p className="text-sm font-medium" style={{ color: "var(--color-gray-700)" }}>{t.name}</p>
+                <p className="text-xs mb-0.5 text-balance" style={{ color: "var(--color-gray-400)" }}>Name</p>
+                <p className="text-sm font-medium text-balance" style={{ color: "var(--color-gray-700)" }}>{t.name}</p>
               </div>
               <div>
-                <p className="text-xs mb-0.5" style={{ color: "var(--color-gray-400)" }}>Size</p>
+                <p className="text-xs mb-0.5 text-balance" style={{ color: "var(--color-gray-400)" }}>Size</p>
                 <code className="text-xs">{t.size}</code>
               </div>
               <div>
-                <p className="text-xs mb-0.5" style={{ color: "var(--color-gray-400)" }}>Line height</p>
+                <p className="text-xs mb-0.5 text-balance" style={{ color: "var(--color-gray-400)" }}>Line height</p>
                 <code className="text-xs">{t.lineHeight}</code>
               </div>
               <div>
-                <p className="text-xs mb-0.5" style={{ color: "var(--color-gray-400)" }}>Tracking</p>
+                <p className="text-xs mb-0.5 text-balance" style={{ color: "var(--color-gray-400)" }}>Tracking</p>
                 <code className="text-xs">{t.tracking}</code>
               </div>
             </div>
@@ -76,7 +76,7 @@ export default function TypographyPage() {
         ))}
       </div>
 
-      <h2>Font weights</h2>
+      <h2 className="text-balance">Font weights</h2>
       <table className="token-table mt-4">
         <thead>
           <tr>
@@ -90,29 +90,29 @@ export default function TypographyPage() {
           {fontWeights.map((w) => (
             <tr key={w.name}>
               <td>
-                <span className="font-barlow" style={{ fontWeight: parseInt(w.value), fontSize: "16px", color: "var(--color-gray-900)" }}>
+                <span className="font-barlow text-balance" style={{ fontWeight: parseInt(w.value), fontSize: "16px", color: "var(--color-gray-900)" }}>
                   The quick brown fox
                 </span>
               </td>
-              <td style={{ color: "var(--color-gray-700)" }}>{w.name}</td>
+              <td className="text-balance" style={{ color: "var(--color-gray-700)" }}>{w.name}</td>
               <td><code>{w.value}</code></td>
-              <td style={{ color: "var(--color-gray-500)" }}>{w.usage}</td>
+              <td className="text-balance" style={{ color: "var(--color-gray-500)" }}>{w.usage}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <h2>Font family</h2>
-      <p>
-        <code>--font-barlow</code> is set to <strong>Barlow</strong> — the primary typeface of the DEW design system. The type scale above previews
+      <h2 className="text-balance">Font family</h2>
+      <p className="text-balance">
+        <code>--font-barlow</code> is set to <strong>Barlow</strong> - the primary typeface of the DEW design system. The type scale above previews
         in Barlow, and it&apos;s applied directly on every component&apos;s root element (Button, Input, Badge, Checkbox, Tag, Tooltip…), so components
         inherit it wherever they&apos;re used, regardless of the surrounding page font.
       </p>
-      <p>
-        <code>--font-sans</code> is set to <strong>Geist</strong> and is scoped to this documentation site&apos;s own UI — sidebar, headings, body
-        copy — not the design system itself.
+      <p className="text-balance">
+        <code>--font-sans</code> is set to <strong>Geist</strong> and is scoped to this documentation site&apos;s own UI - sidebar, headings, body
+        copy - not the design system itself.
       </p>
-      <p>
+      <p className="text-balance">
         <code>--font-mono</code> is set to <strong>Geist Mono</strong> for code snippets and token values across the documentation UI.
       </p>
     </div>

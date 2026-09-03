@@ -54,7 +54,7 @@ export function Sidebar() {
       <nav className="px-3 py-4 flex flex-col gap-6 flex-1">
         {nav.map((section) => (
           <div key={section.title}>
-            <p className="px-2 mb-1 text-xs font-semibold uppercase tracking-widest"
+            <p className="px-2 mb-1 text-xs font-semibold uppercase tracking-widest text-balance"
               style={{ color: "var(--color-gray-400)" }}
             >
               {section.title}
@@ -101,7 +101,7 @@ function NavLink({
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors",
+        "flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors text-balance",
         active
           ? "font-medium"
           : "hover:bg-[var(--color-gray-100)]"

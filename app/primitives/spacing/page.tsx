@@ -34,8 +34,8 @@ export default function SpacingPage() {
         description="A 4px base grid. All padding, margin, and gap values should align to this scale. Tailwind utility classes map directly to these steps."
       />
 
-      <h2>Scale</h2>
-      <p>Each step is a multiple of 4px. Decimals (0.5, 1.5, 2.5, 3.5) fill in the gaps for fine-grained component internals.</p>
+      <h2 className="text-balance">Scale</h2>
+      <p className="text-balance">Each step is a multiple of 4px. Decimals (0.5, 1.5, 2.5, 3.5) fill in the gaps for fine-grained component internals.</p>
 
       <div className="flex flex-col gap-0 mt-6">
         {spacingScale.map((s) => (
@@ -67,8 +67,8 @@ export default function SpacingPage() {
         ))}
       </div>
 
-      <h2>Usage guidelines</h2>
-      <p>Component internals (padding, icon gaps) typically use 1–6 (4px–24px). Layout spacing (section gaps, content margins) uses 8–32 (32px–128px).</p>
+      <h2 className="text-balance">Usage guidelines</h2>
+      <p className="text-balance">Component internals (padding, icon gaps) typically use 1–6 (4px–24px). Layout spacing (section gaps, content margins) uses 8–32 (32px–128px).</p>
 
       <div className="grid grid-cols-2 gap-4 mt-4">
         {[
@@ -80,9 +80,9 @@ export default function SpacingPage() {
           <div key={g.label} className="rounded-lg p-4"
             style={{ border: "1px solid var(--color-gray-200)", background: "var(--color-gray-25)" }}
           >
-            <p className="text-sm font-medium mb-1" style={{ color: "var(--color-gray-800)" }}>{g.label}</p>
+            <p className="text-sm font-medium mb-1 text-balance" style={{ color: "var(--color-gray-800)" }}>{g.label}</p>
             <code className="text-xs">{g.range}</code>
-            <p className="text-xs mt-1" style={{ color: "var(--color-gray-400)" }}>{g.example}</p>
+            <p className="text-xs mt-1 text-balance" style={{ color: "var(--color-gray-400)" }}>{g.example}</p>
           </div>
         ))}
       </div>

@@ -135,7 +135,7 @@ export const FeaturedIcon = (props: FeaturedIconProps) => {
             {...otherProps}
             data-featured-icon
             className={cx(
-                "font-barlow relative flex shrink-0 items-center justify-center",
+                "relative flex shrink-0 items-center justify-center",
 
                 iconsSizes[size],
                 styles[variant].base,

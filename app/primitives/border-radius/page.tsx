@@ -19,10 +19,10 @@ export default function BorderRadiusPage() {
       <PageHeader
         section="Primitives"
         title="Border radius"
-        description="10 steps from flat to pill. Use CSS custom properties — never hardcode radius values in components."
+        description="10 steps from flat to pill. Use CSS custom properties - never hardcode radius values in components."
       />
 
-      <h2>Scale</h2>
+      <h2 className="text-balance">Scale</h2>
 
       <div className="grid grid-cols-5 gap-4 mt-6">
         {radii.map((r) => (
@@ -36,7 +36,7 @@ export default function BorderRadiusPage() {
               }}
             />
             <div>
-              <p className="text-sm font-medium" style={{ color: "var(--color-gray-800)" }}>
+              <p className="text-sm font-medium text-balance" style={{ color: "var(--color-gray-800)" }}>
                 {r.name}
               </p>
               <code className="text-xs">{r.value}</code>
@@ -45,7 +45,7 @@ export default function BorderRadiusPage() {
         ))}
       </div>
 
-      <h2>Token reference</h2>
+      <h2 className="text-balance">Token reference</h2>
       <table className="token-table mt-4">
         <thead>
           <tr>
@@ -59,7 +59,7 @@ export default function BorderRadiusPage() {
             <tr key={r.name}>
               <td><code>{r.token}</code></td>
               <td><code>{r.value}</code></td>
-              <td style={{ color: "var(--color-gray-500)" }}>{r.usage}</td>
+              <td className="text-balance" style={{ color: "var(--color-gray-500)" }}>{r.usage}</td>
             </tr>
           ))}
         </tbody>

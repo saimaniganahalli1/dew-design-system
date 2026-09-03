@@ -25,7 +25,7 @@ function VariantGroup({
 
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--color-gray-400)" }}>
+      <p className="text-xs font-semibold uppercase tracking-widest mb-2 text-balance" style={{ color: "var(--color-gray-400)" }}>
         {CATEGORY_LABEL[category]}
       </p>
       <div className="grid grid-cols-3 gap-x-4 gap-y-2">
@@ -49,7 +49,7 @@ function FeatureGroup({ slug, features }: { slug: string; features: Record<strin
 
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--color-gray-400)" }}>
+      <p className="text-xs font-semibold uppercase tracking-widest mb-2 text-balance" style={{ color: "var(--color-gray-400)" }}>
         Sections
       </p>
       <div className="grid grid-cols-3 gap-x-4 gap-y-2">
@@ -76,11 +76,11 @@ export default function ConfigPage() {
       <PageHeader
         section="Settings"
         title="Config"
-        description="Every checkbox here is config/design-system.config.ts, live. Toggle a colour, size, type, or section and it disappears from that component's doc page immediately — uncheck a component entirely and it drops out of the sidebar and overview too. Changes persist in this browser only; they don't edit the file on disk."
+        description="Every checkbox here is config/design-system.config.ts, live. Toggle a colour, size, type, or section and it disappears from that component's doc page immediately - uncheck a component entirely and it drops out of the sidebar and overview too. Changes persist in this browser only; they don't edit the file on disk."
       />
 
       <div className="flex items-center justify-between mb-6">
-        <p className="text-sm" style={{ color: "var(--color-gray-500)" }}>
+        <p className="text-sm text-balance" style={{ color: "var(--color-gray-500)" }}>
           {entries.length} configured component{entries.length === 1 ? "" : "s"}
         </p>
         <Button size="sm" color="secondary" onClick={resetToDefaults}>

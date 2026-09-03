@@ -19,14 +19,14 @@ const easings = [
     name: "In",
     token: "--ease-in",
     value: "cubic-bezier(0.4, 0, 1, 1)",
-    note: "Accelerating. Use for exits — elements leaving the screen.",
+    note: "Accelerating. Use for exits - elements leaving the screen.",
     curve: "M0,100 C40,100 100,0 100,0",
   },
   {
     name: "Out",
     token: "--ease-out",
     value: "cubic-bezier(0, 0, 0.2, 1)",
-    note: "Decelerating. Use for entrances — elements entering the screen.",
+    note: "Decelerating. Use for entrances - elements entering the screen.",
     curve: "M0,100 C0,100 20,0 100,0",
   },
   {
@@ -52,7 +52,7 @@ const principles = [
   },
   {
     title: "Enter slowly, exit fast",
-    body: "Elements entering the viewport should ease-out and take a little longer. Exits should be quick — users have already made a decision.",
+    body: "Elements entering the viewport should ease-out and take a little longer. Exits should be quick - users have already made a decision.",
   },
   {
     title: "Reduce for accessibility",
@@ -69,7 +69,7 @@ export default function MotionPage() {
         description="Duration and easing tokens that define how DEW components move. Purposeful, fast, and respectful of accessibility preferences."
       />
 
-      <h2>Duration</h2>
+      <h2 className="text-balance">Duration</h2>
       <table className="token-table mt-4">
         <thead>
           <tr>
@@ -82,17 +82,17 @@ export default function MotionPage() {
         <tbody>
           {durations.map((d) => (
             <tr key={d.name}>
-              <td style={{ color: "var(--color-gray-700)", fontWeight: 500 }}>{d.name}</td>
+              <td className="text-balance" style={{ color: "var(--color-gray-700)", fontWeight: 500 }}>{d.name}</td>
               <td><code>{d.token}</code></td>
               <td><code>{d.value}</code></td>
-              <td style={{ color: "var(--color-gray-500)" }}>{d.usage}</td>
+              <td className="text-balance" style={{ color: "var(--color-gray-500)" }}>{d.usage}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <h2>Easing</h2>
-      <p>All curves are defined as CSS cubic-bezier functions. Use the named token, not raw values in component code.</p>
+      <h2 className="text-balance">Easing</h2>
+      <p className="text-balance">All curves are defined as CSS cubic-bezier functions. Use the named token, not raw values in component code.</p>
 
       <div className="grid grid-cols-3 gap-4 mt-6">
         {easings.map((e) => (
@@ -113,27 +113,27 @@ export default function MotionPage() {
               <line x1="0" y1="0" x2="0" y2="100"
                 stroke="var(--color-gray-200)" strokeWidth="1" />
             </svg>
-            <p className="text-sm font-medium mb-0.5" style={{ color: "var(--color-gray-800)" }}>
+            <p className="text-sm font-medium mb-0.5 text-balance" style={{ color: "var(--color-gray-800)" }}>
               {e.name}
             </p>
             <code className="text-xs block mb-1">{e.token}</code>
-            <p className="text-xs" style={{ color: "var(--color-gray-400)", lineHeight: "1.5" }}>
+            <p className="text-xs text-balance" style={{ color: "var(--color-gray-400)", lineHeight: "1.5" }}>
               {e.note}
             </p>
           </div>
         ))}
       </div>
 
-      <h2>Principles</h2>
+      <h2 className="text-balance">Principles</h2>
       <div className="grid grid-cols-3 gap-4 mt-4">
         {principles.map((p) => (
           <div key={p.title} className="rounded-xl p-4"
             style={{ border: "1px solid var(--color-gray-200)" }}
           >
-            <p className="text-sm font-semibold mb-1.5" style={{ color: "var(--color-gray-800)" }}>
+            <p className="text-sm font-semibold mb-1.5 text-balance" style={{ color: "var(--color-gray-800)" }}>
               {p.title}
             </p>
-            <p className="text-xs" style={{ color: "var(--color-gray-500)", lineHeight: "1.6" }}>
+            <p className="text-xs text-balance" style={{ color: "var(--color-gray-500)", lineHeight: "1.6" }}>
               {p.body}
             </p>
           </div>

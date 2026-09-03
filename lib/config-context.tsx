@@ -10,7 +10,7 @@ const STORAGE_KEY = "dew-design-system-config-overrides";
 
 interface ConfigContextValue {
   config: DesignSystemConfig;
-  /** Master on/off for a whole component — hides it from sidebar, overview, and /llms.txt. */
+  /** Master on/off for a whole component - hides it from sidebar, overview, and /llms.txt. */
   setComponentEnabled: (slug: string, enabled: boolean) => void;
   /** Toggles one entry in a `colors` / `sizes` / `types` list. */
   setVariantEnabled: (slug: string, category: "colors" | "sizes" | "types", key: string, enabled: boolean) => void;
@@ -18,7 +18,7 @@ interface ConfigContextValue {
   setFeatureEnabled: (slug: string, feature: string, enabled: boolean) => void;
   /** Discards every override and reverts to the checked-in defaults. */
   resetToDefaults: () => void;
-  /** True once localStorage has been read — lets the config page avoid a "reset" flash. */
+  /** True once localStorage has been read - lets the config page avoid a "reset" flash. */
   hydrated: boolean;
 }
 
@@ -32,15 +32,32 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
   const [config, setConfig] = useState<DesignSystemConfig>(() => cloneConfig(defaultConfig));
   const [hydrated, setHydrated] = useState(false);
 
-  // Runs once, client-only — applies any saved overrides on top of the
+  // Runs once, client-only - applies any saved overrides on top of the
   // checked-in defaults. Server and first client render both use the
   // plain default, so this can only ever add a change, never mismatch.
+  // Merged key-by-key (not a wholesale replace): a saved blob predates
+  // any component added to design-system.config.ts since it was written,
+  // and a naive `setConfig(JSON.parse(raw))` would drop that key entirely,
+  // crashing every page that reads `liveConfig.<newSlug>`.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setConfig(JSON.parse(raw));
+      if (raw) {
+        const saved = JSON.parse(raw) as Partial<DesignSystemConfig>;
+        const merged = cloneConfig(defaultConfig);
+        for (const slug of Object.keys(merged)) {
+          if (saved[slug]) {
+            merged[slug] = {
+              ...merged[slug],
+              ...saved[slug],
+              features: { ...merged[slug].features, ...saved[slug].features },
+            };
+          }
+        }
+        setConfig(merged);
+      }
     } catch {
-      // Corrupt/unavailable storage — fall back to defaults silently.
+      // Corrupt/unavailable storage - fall back to defaults silently.
     }
     setHydrated(true);
   }, []);
@@ -50,7 +67,7 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
     } catch {
-      // Storage full/unavailable — overrides just won't persist this session.
+      // Storage full/unavailable - overrides just won't persist this session.
     }
   }, [config, hydrated]);
 
@@ -92,7 +109,7 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch {
-      // Ignore — config state is already reset either way.
+      // Ignore - config state is already reset either way.
     }
   }, []);
 
@@ -105,7 +122,7 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
   );
 }
 
-/** Live, mutable design-system config. Every doc page reads through this — not the static export — so the /config page's toggles apply immediately, site-wide. */
+/** Live, mutable design-system config. Every doc page reads through this - not the static export - so the /config page's toggles apply immediately, site-wide. */
 export function useConfig() {
   const ctx = useContext(ConfigContext);
   if (!ctx) throw new Error("useConfig must be used within a ConfigProvider");

@@ -5,7 +5,7 @@ import { rawNav, filterNav, type NavSection } from "@/lib/nav";
 
 /**
  * Live nav, filtered through the in-browser config (context + localStorage
- * overrides) rather than the static file — toggling a component off on
+ * overrides) rather than the static file - toggling a component off on
  * /config removes it from the sidebar and overview immediately, no reload.
  */
 export function useNav(): NavSection[] {

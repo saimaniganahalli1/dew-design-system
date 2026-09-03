@@ -1,10 +1,10 @@
 /**
- * DEW Design System — component/variant configuration.
+ * DEW Design System - component/variant configuration.
  *
  * This is the single source of truth for which components and which
  * variants of each component appear in the documentation site. Doc pages
  * read from here instead of hardcoding their own colour/size/type lists,
- * so adding, hiding, or reordering a variant is a data change — not a
+ * so adding, hiding, or reordering a variant is a data change - not a
  * JSX change.
  *
  * To hide a whole component from the sidebar/overview: set `enabled: false`.
@@ -13,7 +13,7 @@
  * `features` flag to `false`.
  */
 
-/** A single selectable variant — a colour, size, or type — shown in the docs. */
+/** A single selectable variant - a colour, size, or type - shown in the docs. */
 export interface VariantOption {
   /** The literal value passed to the component prop, e.g. "primary". */
   key: string;
@@ -37,139 +37,13 @@ export interface ComponentConfig {
   sizes?: VariantOption[];
   /** Shape/type variants (e.g. Badge's pill-color / color / modern). */
   types?: VariantOption[];
-  /** Whole documentation sections — e.g. "With icon", "States", "As link". Defaults to visible if unset. */
+  /** Whole documentation sections - e.g. "With icon", "States", "As link". Defaults to visible if unset. */
   features?: Record<string, boolean>;
 }
 
 export type DesignSystemConfig = Record<string, ComponentConfig>;
 
 export const designSystemConfig: DesignSystemConfig = {
-  button: {
-    title: "Button",
-    enabled: true,
-    colors: [
-      { key: "primary",              label: "Primary",   enabled: true, group: "standard" },
-      { key: "secondary",            label: "Secondary", enabled: true, group: "standard" },
-      { key: "tertiary",             label: "Tertiary",  enabled: true, group: "standard" },
-      { key: "link-color",           label: "Link colour", enabled: true, group: "standard" },
-      { key: "link-gray",            label: "Link grey",   enabled: true, group: "standard" },
-      { key: "primary-destructive",   label: "Primary",   enabled: true, group: "destructive" },
-      { key: "secondary-destructive", label: "Secondary", enabled: true, group: "destructive" },
-      { key: "tertiary-destructive",  label: "Tertiary",  enabled: true, group: "destructive" },
-      { key: "link-destructive",      label: "Link",      enabled: true, group: "destructive" },
-    ],
-    sizes: [
-      { key: "xs", label: "Extra small", enabled: true },
-      { key: "sm", label: "Small",       enabled: true },
-      { key: "md", label: "Medium",      enabled: true },
-      { key: "lg", label: "Large",       enabled: true },
-      { key: "xl", label: "Extra large", enabled: true },
-    ],
-    features: {
-      iconLeading: true,
-      iconTrailing: true,
-      iconBoth: true,
-      iconOnly: true,
-      disabled: true,
-      loading: true,
-      loadingWithText: true,
-      asLink: true,
-    },
-  },
-
-  badge: {
-    title: "Badge",
-    enabled: true,
-    types: [
-      { key: "pill-color", label: "Pill colour", enabled: true },
-      { key: "color",      label: "Colour",      enabled: true },
-      { key: "modern",     label: "Modern",      enabled: true },
-    ],
-    colors: [
-      { key: "gray",    label: "Gray",    enabled: true },
-      { key: "brand",   label: "Brand",   enabled: true },
-      { key: "error",   label: "Error",   enabled: true },
-      { key: "warning", label: "Warning", enabled: true },
-      { key: "success", label: "Success", enabled: true },
-      { key: "slate",   label: "Slate",   enabled: true },
-      { key: "sky",     label: "Sky",     enabled: true },
-      { key: "blue",    label: "Blue",    enabled: true },
-      { key: "indigo",  label: "Indigo",  enabled: true },
-      { key: "purple",  label: "Purple",  enabled: true },
-      { key: "pink",    label: "Pink",    enabled: true },
-      { key: "orange",  label: "Orange",  enabled: true },
-    ],
-    sizes: [
-      { key: "sm", label: "Small",  enabled: true },
-      { key: "md", label: "Medium", enabled: true },
-      { key: "lg", label: "Large",  enabled: true },
-    ],
-    features: {
-      withDot: true,
-      withIcon: true,
-      iconOnly: true,
-      withButton: true,
-      group: true,
-    },
-  },
-
-  input: {
-    title: "Input",
-    enabled: true,
-    sizes: [
-      { key: "sm", label: "Small",  enabled: true },
-      { key: "md", label: "Medium", enabled: true },
-      { key: "lg", label: "Large",  enabled: true },
-    ],
-    features: {
-      states: true,
-      icons: true,
-      tooltip: true,
-      shortcut: true,
-      group: true,
-      password: true,
-      date: true,
-      number: true,
-      payment: true,
-      tags: true,
-      fileUpload: true,
-      pin: true,
-    },
-  },
-
-  checkbox: {
-    title: "Checkbox",
-    enabled: true,
-    sizes: [
-      { key: "sm", label: "Small",  enabled: true },
-      { key: "md", label: "Medium", enabled: true },
-    ],
-    features: {
-      states: true,
-      disabled: true,
-      withLabel: true,
-      withHint: true,
-      group: true,
-    },
-  },
-
-  tooltip: {
-    title: "Tooltip",
-    enabled: true,
-    types: [
-      { key: "top",    label: "Top",    enabled: true },
-      { key: "right",  label: "Right",  enabled: true },
-      { key: "bottom", label: "Bottom", enabled: true },
-      { key: "left",   label: "Left",   enabled: true },
-    ],
-    features: {
-      description: true,
-      arrow: true,
-      delay: true,
-      disabled: true,
-    },
-  },
-
   alert: {
     title: "Alert",
     enabled: true,
@@ -186,9 +60,268 @@ export const designSystemConfig: DesignSystemConfig = {
       { key: "full-width", label: "Full width", enabled: true },
     ],
     features: {
+      playground: true,
       withDismiss: true,
       withConfirm: true,
       linkActions: true,
+      usage: true,
+      figma: true,
+    },
+  },
+
+  avatar: {
+    title: "Avatar",
+    enabled: true,
+    sizes: [
+      { key: "xs",  label: "Extra small", enabled: true },
+      { key: "sm",  label: "Small",       enabled: true },
+      { key: "md",  label: "Medium",      enabled: true },
+      { key: "lg",  label: "Large",       enabled: true },
+      { key: "xl",  label: "Extra large", enabled: true },
+      { key: "2xl", label: "2X large",    enabled: true },
+    ],
+    features: {
+      playground: true,
+      fallback: true,
+      border: true,
+      status: true,
+      verified: true,
+      count: true,
+      companyIcon: true,
+      addButton: true,
+      labelGroup: true,
+      profilePhoto: true,
+      group: true,
+      usage: true,
+      figma: true,
+    },
+  },
+
+  badge: {
+    title: "Badge",
+    enabled: true,
+    // Figma's "Badge" documentation frame (node 100:20530) only defines two types - "Pill
+    // color" and "Badge Color" - across five colours (Brand/Warning/Success/Error/Gray). There
+    // is no "Modern" type symbol anywhere in the frame, and no swatches for the other 7 colours
+    // the component's real BadgeColors type supports. Trimmed to match, per "Figma is the
+    // source of truth" - both stay real, working values in badges.tsx/badge-types.ts and in the
+    // API table below (never invent or drop a prop), they just aren't demonstrated here.
+    types: [
+      { key: "pill-color", label: "Pill colour", enabled: true },
+      { key: "color",      label: "Colour",      enabled: true },
+    ],
+    colors: [
+      { key: "gray",    label: "Gray",    enabled: true },
+      { key: "brand",   label: "Brand",   enabled: true },
+      { key: "error",   label: "Error",   enabled: true },
+      { key: "warning", label: "Warning", enabled: true },
+      { key: "success", label: "Success", enabled: true },
+    ],
+    sizes: [
+      { key: "sm", label: "Small",  enabled: true },
+      { key: "md", label: "Medium", enabled: true },
+      { key: "lg", label: "Large",  enabled: true },
+    ],
+    features: {
+      playground: true,
+      withDot: true,
+      withIcon: true,
+      iconOnly: true,
+      withButton: true,
+      group: true,
+      usage: true,
+      figma: true,
+    },
+  },
+
+  button: {
+    title: "Button",
+    enabled: true,
+    colors: [
+      { key: "primary",              label: "Primary",   enabled: true, group: "standard" },
+      { key: "secondary",            label: "Secondary", enabled: true, group: "standard" },
+      { key: "tertiary",             label: "Tertiary",  enabled: true, group: "standard" },
+      { key: "link-color",           label: "Link colour", enabled: true, group: "standard" },
+      { key: "link-gray",            label: "Link grey",   enabled: true, group: "standard" },
+      { key: "primary-destructive",   label: "Primary",   enabled: true, group: "destructive" },
+      { key: "secondary-destructive", label: "Secondary", enabled: true, group: "destructive" },
+      { key: "tertiary-destructive",  label: "Tertiary",  enabled: true, group: "destructive" },
+      { key: "link-destructive",      label: "Link",      enabled: true, group: "destructive" },
+    ],
+    // Figma's "Buttons/Button" documentation frame (node 101:20844) only defines sm/md/lg/xl -
+    // no "xs" symbol anywhere in it, across any hierarchy or state. "xs" exists in the
+    // component's real type signature (Untitled UI ships it, and it still works if you pass it -
+    // see the API table) but isn't a documented Figma variant, so it isn't demonstrated here.
+    // Same precedent as Select's "lg" (see that entry below).
+    sizes: [
+      { key: "sm", label: "Small",       enabled: true },
+      { key: "md", label: "Medium",      enabled: true },
+      { key: "lg", label: "Large",       enabled: true },
+      { key: "xl", label: "Extra large", enabled: true },
+    ],
+    features: {
+      playground: true,
+      iconLeading: true,
+      iconTrailing: true,
+      iconBoth: true,
+      iconOnly: true,
+      disabled: true,
+      loading: true,
+      loadingWithText: true,
+      asLink: true,
+      usage: true,
+      figma: true,
+    },
+  },
+
+  checkbox: {
+    title: "Checkbox",
+    enabled: true,
+    sizes: [
+      { key: "sm", label: "Small",  enabled: true },
+      { key: "md", label: "Medium", enabled: true },
+    ],
+    features: {
+      playground: true,
+      states: true,
+      disabled: true,
+      withLabel: true,
+      withHint: true,
+      group: true,
+      usage: true,
+      figma: true,
+    },
+  },
+
+  input: {
+    title: "Input",
+    enabled: true,
+    sizes: [
+      { key: "sm", label: "Small",  enabled: true },
+      { key: "md", label: "Medium", enabled: true },
+      { key: "lg", label: "Large",  enabled: true },
+    ],
+    features: {
+      playground: true,
+      states: true,
+      icons: true,
+      tooltip: true,
+      shortcut: true,
+      group: true,
+      password: true,
+      date: true,
+      number: true,
+      payment: true,
+      tags: true,
+      fileUpload: true,
+      pin: true,
+      usage: true,
+      figma: true,
+    },
+  },
+
+  "radio-buttons": {
+    title: "Radio buttons",
+    enabled: true,
+    sizes: [
+      { key: "sm", label: "Small",  enabled: true },
+      { key: "md", label: "Medium", enabled: true },
+    ],
+    features: {
+      playground: true,
+      withHint: true,
+      disabled: true,
+      orientation: true,
+      group: true,
+      usage: true,
+      figma: true,
+    },
+  },
+
+  select: {
+    title: "Select",
+    enabled: true,
+    // Figma's "Select" documentation frame (node 65:1317) only defines sm/md for
+    // the base Select/ComboBox/TagSelect - "lg" exists in the component's type
+    // signature (Untitled UI ships it) but isn't a documented Figma variant, so
+    // it's not demonstrated here. MultiSelect is a separate Figma component that
+    // does define lg - see its own demo below, which doesn't use this sizes list.
+    sizes: [
+      { key: "sm", label: "Small",  enabled: true },
+      { key: "md", label: "Medium", enabled: true },
+    ],
+    features: {
+      playground: true,
+      withIcon: true,
+      withAvatar: true,
+      supportingText: true,
+      disabled: true,
+      comboBox: true,
+      multiSelect: true,
+      tagSelect: true,
+      nativeSelect: true,
+      usage: true,
+      figma: true,
+    },
+  },
+
+  toast: {
+    title: "Toast",
+    enabled: true,
+    colors: [
+      { key: "default", label: "Default", enabled: true },
+      { key: "brand",   label: "Brand",   enabled: true },
+      { key: "gray",    label: "Gray",    enabled: true },
+      { key: "error",   label: "Error",   enabled: true },
+      { key: "warning", label: "Warning", enabled: true },
+      { key: "success", label: "Success", enabled: true },
+    ],
+    features: {
+      playground: true,
+      withDescription: true,
+      withAction: true,
+      dismiss: true,
+      usage: true,
+      figma: true,
+    },
+  },
+
+  toggle: {
+    title: "Toggle",
+    enabled: true,
+    sizes: [
+      { key: "sm", label: "Small",  enabled: true },
+      { key: "md", label: "Medium", enabled: true },
+    ],
+    features: {
+      playground: true,
+      slim: true,
+      withLabel: true,
+      withHint: true,
+      disabled: true,
+      group: true,
+      usage: true,
+      figma: true,
+    },
+  },
+
+  tooltip: {
+    title: "Tooltip",
+    enabled: true,
+    types: [
+      { key: "top",    label: "Top",    enabled: true },
+      { key: "right",  label: "Right",  enabled: true },
+      { key: "bottom", label: "Bottom", enabled: true },
+      { key: "left",   label: "Left",   enabled: true },
+    ],
+    features: {
+      playground: true,
+      description: true,
+      arrow: true,
+      delay: true,
+      disabled: true,
+      usage: true,
+      figma: true,
     },
   },
 };

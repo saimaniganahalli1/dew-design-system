@@ -13,7 +13,7 @@
 @custom-variant placement-right (&[data-placement="right"]);
 
 /* ─────────────────────────────────────────────────────────────────────
-   DEW Design System — Token Foundation (Untitled UI scale)
+   DEW Design System - Token Foundation (Untitled UI scale)
    ───────────────────────────────────────────────────────────────────── */
 
 @theme inline {
@@ -23,32 +23,50 @@
   --font-mono: var(--font-geist-mono, "Geist Mono"), ui-monospace, monospace;
 
   /* ── Neutral (Gray) palette ── */
-  --color-gray-25:  #FCFCFD;
-  --color-gray-50:  #F9FAFB;
-  --color-gray-100: #F2F4F7;
-  --color-gray-200: #EAECF0;
-  --color-gray-300: #D0D5DD;
-  --color-gray-400: #98A2B3;
-  --color-gray-500: #667085;
-  --color-gray-600: #475467;
-  --color-gray-700: #344054;
-  --color-gray-800: #1D2939;
-  --color-gray-900: #101828;
+  /* DEW's warm-gray scale, not Untitled UI's stock cool one - confirmed via 5 independent
+     Figma frames (Input, Checkbox/Radio, Avatar, Badge, Button; see CONTEXT.md's Known gaps).
+     11 of 12 steps confirmed; 950 is unconfirmed and left as Untitled UI's stock value since
+     nothing in this codebase reads it. */
+  --color-gray-25:  #FCFCFC;
+  --color-gray-50:  #F8F8F7;
+  --color-gray-100: #F2F2F1;
+  --color-gray-200: #E5E4E2;
+  --color-gray-300: #D2D0CE;
+  --color-gray-400: #B5B2AF;
+  --color-gray-500: #8F8B87;
+  --color-gray-600: #706B68;
+  --color-gray-700: #585451;
+  --color-gray-800: #423E3B;
+  --color-gray-900: #2E2925;
   --color-gray-950: #0C111D;
 
-  /* ── Brand (Primary) — swap for DEW brand ── */
-  --color-brand-25:  #F5F8FF;
-  --color-brand-50:  #EFF4FF;
-  --color-brand-100: #D1E0FF;
-  --color-brand-200: #B2CCFF;
-  --color-brand-300: #84ADFF;
-  --color-brand-400: #528BFF;
-  --color-brand-500: #2970FF;
-  --color-brand-600: #155EEF;
-  --color-brand-700: #004EEB;
-  --color-brand-800: #0040C1;
-  --color-brand-900: #00359E;
-  --color-brand-950: #002266;
+  /* ── Brand (Primary) - DEW Marine Teal ── */
+  --color-brand-25:  #F6FBFC;
+  --color-brand-50:  #EDF7F9;
+  --color-brand-100: #DCECEF;
+  --color-brand-200: #C3D9DF;
+  --color-brand-300: #9CA9B3;
+  --color-brand-400: #4D788A;
+  --color-brand-500: #2A667C;
+  --color-brand-600: #185E74;
+  --color-brand-700: #0D576E;
+  --color-brand-800: #0A485A;
+  --color-brand-900: #073542;
+  --color-brand-950: #041E27;
+
+  /* ── Accent (Secondary) - DEW Seagrass Green ── */
+  --color-accent-25:  #F7FBFB;
+  --color-accent-50:  #EEF6F6;
+  --color-accent-100: #DEEAEA;
+  --color-accent-200: #C9DBDB;
+  --color-accent-300: #B6C7C7;
+  --color-accent-400: #80A9A9;
+  --color-accent-500: #649898;
+  --color-accent-600: #568F8F;
+  --color-accent-700: #4A8C8C;
+  --color-accent-800: #3B7272;
+  --color-accent-900: #2A5555;
+  --color-accent-950: #162D2D;
 
   /* ── Error ── */
   --color-error-25:  #FFFBFA;
@@ -92,21 +110,38 @@
   --color-success-900: #074D31;
   --color-success-950: #053321;
 
-  /* ── Utility colours (Untitled UI's extended badge/tag palette) ── */
-  --color-utility-neutral-50:  #F9FAFB;
-  --color-utility-neutral-100: #F2F4F7;
-  --color-utility-neutral-200: #EAECF0;
+  /* ── Utility colours (Untitled UI's extended badge/tag palette) ──
+     neutral-* is DEW's warm-gray scale, not Untitled UI's stock cool
+     one - confirmed against Figma's "Badge" frame (node 100:20530,
+     Component colors/Utility/Gray/utility-gray-700 = #585451, -500 =
+     #8f8b87, -200 = #e5e4e2) plus the same values independently
+     confirmed 50/200/400/500/700 across the Input, Checkbox/Radio,
+     and Avatar frames (see CONTEXT.md). Only the steps Badge actually
+     consumes (filledColors.gray + its addonButton hover state) are
+     fixed here - 300 is untouched since nothing in this codebase reads
+     utility-neutral-300 (separate namespace from --color-gray-*, which
+     now carries the same warm-gray fix sitewide - see above). */
+  --color-utility-neutral-50:  #F8F8F7;
+  --color-utility-neutral-100: #F2F2F1;
+  --color-utility-neutral-200: #E5E4E2;
   --color-utility-neutral-300: #D0D5DD;
-  --color-utility-neutral-400: #98A2B3;
-  --color-utility-neutral-500: #667085;
-  --color-utility-neutral-700: #344054;
+  --color-utility-neutral-400: #B5B2AF;
+  --color-utility-neutral-500: #8F8B87;
+  --color-utility-neutral-700: #585451;
 
-  --color-utility-brand-50:  #EFF4FF;
-  --color-utility-brand-100: #D1E0FF;
-  --color-utility-brand-200: #B2CCFF;
-  --color-utility-brand-400: #528BFF;
-  --color-utility-brand-500: #2970FF;
-  --color-utility-brand-700: #004EEB;
+  --color-utility-brand-50:  #EDF7F9;
+  --color-utility-brand-100: #DCECEF;
+  --color-utility-brand-200: #C3D9DF;
+  --color-utility-brand-400: #4D788A;
+  --color-utility-brand-500: #2A667C;
+  --color-utility-brand-700: #0D576E;
+
+  --color-utility-accent-50:  #EEF6F6;
+  --color-utility-accent-100: #DEEAEA;
+  --color-utility-accent-200: #C9DBDB;
+  --color-utility-accent-400: #80A9A9;
+  --color-utility-accent-500: #649898;
+  --color-utility-accent-700: #4A8C8C;
 
   --color-utility-red-50:  #FEF3F2;
   --color-utility-red-100: #FEE4E2;
@@ -181,11 +216,11 @@
   /* ── Foreground ("fg") colours ──
      Unlike primary/secondary/tertiary (where bg/text/ring diverge per
      name), an "fg" token is the SAME value regardless of which property
-     uses it — text-fg-brand-primary, border-fg-brand-primary, and
+     uses it - text-fg-brand-primary, border-fg-brand-primary, and
      bg-fg-brand-primary are all brand-600. Declaring these as real
      `--color-*` theme entries (not hand-written @utility) gives every
      property variant (bg-/text-/border-/ring-/outline-/fill-) AND full
-     opacity-modifier support (`/30`, `/10`, …) for free — required by
+     opacity-modifier support (`/30`, `/10`, …) for free - required by
      FeaturedIcon's `outline` theme, which does `before:border-fg-brand-primary/30`. */
   --color-fg-secondary:              var(--color-gray-700);
   --color-fg-tertiary:               var(--color-gray-600);
@@ -201,7 +236,7 @@
   --color-fg-success-secondary:      var(--color-success-500);
   --color-fg-white:                  #ffffff;
 
-  /* Featured icon (light theme) — icon colour sitting on a tinted circle */
+  /* Featured icon (light theme) - icon colour sitting on a tinted circle */
   --color-featured-icon-light-fg-brand:   var(--color-brand-600);
   --color-featured-icon-light-fg-gray:    var(--color-gray-500);
   --color-featured-icon-light-fg-error:   var(--color-error-600);
@@ -269,10 +304,10 @@
 :root {
   /*
    * Every value below is a `var(--color-*)` reference into the primitive
-   * scale defined in @theme above — never a duplicated hex literal.
+   * scale defined in @theme above - never a duplicated hex literal.
    * Components inherit from primitives: rebrand by editing the primitive
-   * palette (Colours page) and every semantic token — and therefore every
-   * component built on it — updates automatically. `#ffffff` is kept
+   * palette (Colours page) and every semantic token - and therefore every
+   * component built on it - updates automatically. `#ffffff` is kept
    * literal because pure white isn't a step on the gray ramp.
    */
 
@@ -287,6 +322,9 @@
   --ui-bg-brand-solid:         var(--color-brand-600);
   --ui-bg-brand-solid_hover:   var(--color-brand-700);
   --ui-bg-brand-secondary:     var(--color-brand-100);
+  --ui-bg-accent-solid:        var(--color-accent-600);
+  --ui-bg-accent-solid_hover:  var(--color-accent-700);
+  --ui-bg-accent-secondary:    var(--color-accent-100);
   --ui-bg-error-primary:       var(--color-error-50);
   --ui-bg-error-solid:         var(--color-error-600);
   --ui-bg-error-solid_hover:   var(--color-error-700);
@@ -308,32 +346,63 @@
   --ui-text-brand-secondary_hover:   var(--color-brand-800);
   --ui-text-brand-tertiary:          var(--color-brand-600);
   --ui-text-brand-tertiary_alt:      var(--color-brand-700);
+  --ui-text-accent-secondary:        var(--color-accent-700);
+  --ui-text-accent-secondary_hover:  var(--color-accent-800);
+  --ui-text-accent-tertiary:         var(--color-accent-600);
   --ui-text-error-primary:           var(--color-error-600);
   --ui-text-error-primary_hover:     var(--color-error-700);
   --ui-text-tooltip-supporting-text: var(--color-gray-400);
 
   /* Ring / Border */
   --ui-ring-primary:            var(--color-gray-300);
-  --ui-ring-brand:              var(--color-brand-300);
+  /* Text-field focus ring (Input/Select/ComboBox/MultiSelect/TagSelect/PinInput,
+     `isFocusWithin && "ring-2 ring-brand"`) - brand-500 per Figma's "Select"
+     documentation frame (border-brand, #2A667C). A different token from
+     --ui-ring-focus-ring below (the focus-VISIBLE outline on discrete controls
+     like Checkbox/Radio/Toggle/Button/SelectItem) - that one was previously
+     unaudited, now confirmed against Figma's "Checkbox" frame (node 95:15178):
+     its focus-ring effect is a two-layer shadow, 2px bg-primary then 4px
+     Colors/Effects/Focus rings/focus-ring (#2A667C, brand-500 again, not the
+     paler brand-300 both tokens used to carry). Figma is the source of truth
+     here - see CONTEXT.md. */
+  --ui-ring-brand:              var(--color-brand-500);
   --ui-ring-brand-solid:        var(--color-brand-600);
+  --ui-ring-accent:             var(--color-accent-300);
+  --ui-ring-accent-solid:       var(--color-accent-600);
   --ui-ring-secondary:          var(--color-gray-200);
   --ui-ring-secondary_alt:      var(--color-gray-100);
-  --ui-ring-error_subtle:       var(--color-error-200);
-  --ui-ring-error:              var(--color-error-300);
-  --ui-ring-focus-ring:         var(--color-brand-300);
+  /* Destructive text-field border, resting vs focused - same Figma "Input field"
+     sandbox as the brand fix above. Resting invalid state (node 91:13669) uses
+     border-error_subtle = error-300 (#FDA29B); focused invalid state (node
+     91:13879) uses border-error = error-500 (#F04438). Both were previously one
+     and two steps too pale (error-200 / error-300). Figma is the source of
+     truth here - see CONTEXT.md. */
+  --ui-ring-error_subtle:       var(--color-error-300);
+  --ui-ring-error:              var(--color-error-500);
+  --ui-ring-focus-ring:         var(--color-brand-500);
   --ui-ring-border-primary:     var(--color-gray-300);
-  --ui-ring-border-brand:       var(--color-brand-300);
-  --ui-ring-border-error_subtle:var(--color-error-200);
-  --ui-ring-border-error:       var(--color-error-300);
+  --ui-ring-border-brand:       var(--color-brand-500);
+  --ui-ring-border-error_subtle:var(--color-error-300);
+  --ui-ring-border-error:       var(--color-error-500);
 
-  /* Border (distinct namespace from ring — same visual role, different property) */
+  /* Border (distinct namespace from ring - same visual role, different property) */
   --ui-border-primary:          var(--color-gray-300);
+  --ui-border-secondary:        var(--color-gray-200);
+  --ui-border-toggle-border:                    var(--color-gray-300);
+  --ui-border-toggle-slim-border_pressed:       var(--color-brand-600);
+  --ui-border-toggle-slim-border_pressed-hover: var(--color-brand-700);
 
   /* Outline */
   --ui-outline-brand:           var(--color-brand-300);
-  --ui-outline-error:           var(--color-error-200);
-  --ui-outline-error_subtle:    var(--color-error-100);
-  --ui-outline-focus-ring:      var(--color-brand-300);
+  --ui-outline-accent:          var(--color-accent-300);
+  /* Destructive Button's focus-visible outline (all 4 destructive colour variants) and
+     InputNumber's invalid+focused outline - same error-300/500 subtle/full split already
+     applied to --ui-ring-error* above, confirmed again via Figma's "Buttons/Button
+     destructive" frame (node 101:21443): focus-ring-error = error-500 (#F04438). This sibling
+     token was missed when that fix was made - see CONTEXT.md. */
+  --ui-outline-error:           var(--color-error-500);
+  --ui-outline-error_subtle:    var(--color-error-300);
+  --ui-outline-focus-ring:      var(--color-brand-500);
   --ui-outline-primary:         var(--color-gray-300);
 
   /* Fill */
@@ -349,7 +418,7 @@
 /* ─────────────────────────────────────────────────────────────────────
    Untitled UI Semantic Utilities
    Declared with `@utility` (not `@layer utilities`) so Tailwind treats
-   each as a real utility eligible for variant compounding — hover:,
+   each as a real utility eligible for variant compounding - hover:,
    focus-within:, group-invalid:, in-data-*:, etc. A plain CSS class in
    `@layer utilities` is NOT variant-aware in Tailwind v4; `@utility` is.
    Separate namespaces → bg-primary ≠ text-primary ≠ ring-primary.
@@ -366,6 +435,9 @@
 @utility bg-brand-solid         { background-color: var(--ui-bg-brand-solid); }
 @utility bg-brand-solid_hover   { background-color: var(--ui-bg-brand-solid_hover); }
 @utility bg-brand-secondary     { background-color: var(--ui-bg-brand-secondary); }
+@utility bg-accent-solid        { background-color: var(--ui-bg-accent-solid); }
+@utility bg-accent-solid_hover  { background-color: var(--ui-bg-accent-solid_hover); }
+@utility bg-accent-secondary    { background-color: var(--ui-bg-accent-secondary); }
 @utility bg-error-primary       { background-color: var(--ui-bg-error-primary); }
 @utility bg-error-solid         { background-color: var(--ui-bg-error-solid); }
 @utility bg-error-solid_hover   { background-color: var(--ui-bg-error-solid_hover); }
@@ -387,11 +459,14 @@
 @utility text-brand-secondary_hover   { color: var(--ui-text-brand-secondary_hover); }
 @utility text-brand-tertiary          { color: var(--ui-text-brand-tertiary); }
 @utility text-brand-tertiary_alt      { color: var(--ui-text-brand-tertiary_alt); }
+@utility text-accent-secondary        { color: var(--ui-text-accent-secondary); }
+@utility text-accent-secondary_hover  { color: var(--ui-text-accent-secondary_hover); }
+@utility text-accent-tertiary         { color: var(--ui-text-accent-tertiary); }
 @utility text-error-primary           { color: var(--ui-text-error-primary); }
 @utility text-error-primary_hover     { color: var(--ui-text-error-primary_hover); }
 @utility text-tooltip-supporting-text { color: var(--ui-text-tooltip-supporting-text); }
 /* text-fg-*, text-featured-icon-light-fg-*, border-fg-*, and bg-fg-brand-primary
-   are real @theme colours (see "Foreground colours" above) — Tailwind
+   are real @theme colours (see "Foreground colours" above) - Tailwind
    generates their bg-/text-/border-/ring- utilities automatically, with
    opacity-modifier support, so no manual @utility declaration is needed. */
 
@@ -399,6 +474,8 @@
 @utility ring-primary             { --tw-ring-color: var(--ui-ring-primary); }
 @utility ring-brand               { --tw-ring-color: var(--ui-ring-brand); }
 @utility ring-brand-solid         { --tw-ring-color: var(--ui-ring-brand-solid); }
+@utility ring-accent              { --tw-ring-color: var(--ui-ring-accent); }
+@utility ring-accent-solid        { --tw-ring-color: var(--ui-ring-accent-solid); }
 @utility ring-secondary           { --tw-ring-color: var(--ui-ring-secondary); }
 @utility ring-secondary_alt       { --tw-ring-color: var(--ui-ring-secondary_alt); }
 @utility ring-error_subtle        { --tw-ring-color: var(--ui-ring-error_subtle); }
@@ -409,11 +486,16 @@
 @utility ring-border-error_subtle { --tw-ring-color: var(--ui-ring-border-error_subtle); }
 @utility ring-border-error        { --tw-ring-color: var(--ui-ring-border-error); }
 
-/* ── Border colour (distinct from ring — Alert/FeaturedIcon use real `border`, not `ring`) ── */
+/* ── Border colour (distinct from ring - Alert/FeaturedIcon use real `border`, not `ring`) ── */
 @utility border-primary          { border-color: var(--ui-border-primary); }
+@utility border-secondary        { border-color: var(--ui-border-secondary); }
+@utility border-toggle-border                    { border-color: var(--ui-border-toggle-border); }
+@utility border-toggle-slim-border_pressed       { border-color: var(--ui-border-toggle-slim-border_pressed); }
+@utility border-toggle-slim-border_pressed-hover { border-color: var(--ui-border-toggle-slim-border_pressed-hover); }
 
 /* ── Outlines ── */
 @utility outline-brand        { outline-color: var(--ui-outline-brand); }
+@utility outline-accent       { outline-color: var(--ui-outline-accent); }
 @utility outline-error        { outline-color: var(--ui-outline-error); }
 @utility outline-error_subtle { outline-color: var(--ui-outline-error_subtle); }
 @utility outline-focus-ring   { outline-color: var(--ui-outline-focus-ring); }
@@ -480,7 +562,14 @@ body {
   letter-spacing: 0.08em;
 }
 
-.prose-doc p {
+/* Direct-child combinator, not a descendant selector: this must style the
+   docs' own top-level prose paragraphs only. A bare `.prose-doc p` also
+   matches <p> tags buried inside a rendered DEW component's own internals
+   (Checkbox and Toggle both label themselves with a <p>) and corrupts their
+   spacing with a phantom 16px margin-bottom every time that component is
+   demonstrated on a doc page - caught via a Checkbox+Button row that looked
+   misaligned on /test-page despite already being items-center in one flex row. */
+.prose-doc > p {
   color: var(--ui-text-tertiary);
   line-height: 1.7;
   margin-bottom: 16px;
