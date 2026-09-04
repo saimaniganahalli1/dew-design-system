@@ -238,6 +238,31 @@ export const designSystemConfig: DesignSystemConfig = {
     },
   },
 
+  "radio-groups": {
+    title: "Radio groups",
+    enabled: true,
+    // Six card-style selection layouts, each wrapping a real DEW control (CheckboxBase,
+    // RadioButtonBase, Avatar, FeaturedIcon) inside a react-aria RadioGroup/Radio pair.
+    types: [
+      { key: "icon-simple",  label: "Icon simple",  enabled: true },
+      { key: "icon-card",    label: "Icon card",    enabled: true },
+      { key: "avatar",       label: "Avatar",       enabled: true },
+      { key: "payment-icon", label: "Payment icon", enabled: true },
+      { key: "radio-button", label: "Radio button", enabled: true },
+      { key: "checkbox",     label: "Checkbox",     enabled: true },
+    ],
+    sizes: [
+      { key: "sm", label: "Small",  enabled: true },
+      { key: "md", label: "Medium", enabled: true },
+    ],
+    features: {
+      playground: true,
+      disabled: true,
+      usage: true,
+      figma: true,
+    },
+  },
+
   select: {
     title: "Select",
     enabled: true,

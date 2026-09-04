@@ -36,6 +36,7 @@ export const rawNav: NavSection[] = [
       { title: "Input", href: "/components/input", description: "Text field plus specialised variants - password, date, number, payment, tags, file upload, PIN." },
       { title: "Modal", href: "/components/modal", description: "Documentation coming soon." },
       { title: "Radio buttons", href: "/components/radio-buttons", description: "Single-choice selection within a group - optional hint text, horizontal/vertical orientation, two sizes." },
+      { title: "Radio groups", href: "/components/radio-groups", description: "Card-style single-choice selection - icon, avatar, payment, radio, and checkbox layouts, two sizes." },
       { title: "Select", href: "/components/select", description: "Dropdown selection - single select, searchable combobox, multi-select, tag select, and native select, in three sizes." },
       { title: "Toast", href: "/components/toast", description: "Transient corner notification powered by sonner - 6 colours, optional action, composed from Button/CloseButton/FeaturedIcon." },
       { title: "Toggle", href: "/components/toggle", description: "Binary switch control with an optional label/hint and a slim track variant, in two sizes." },

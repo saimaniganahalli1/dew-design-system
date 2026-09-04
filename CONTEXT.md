@@ -308,6 +308,55 @@ tooling, it's a reconstruction of an actual product screen. Two rules specific t
   are added/removed - so toggling the inspector off never shifts layout. Any new `/test-*` page
   must be built with this from the start, not bolted on after.
 
+## Exploratory page layouts (`/pages/<page-name>`)
+
+A `/pages/<page-name>` route is a different thing again from both a doc page and a `/test-*`
+generated screen. `/test-*` exists to prove one specific, already-decided Figma frame maps 1:1
+onto the shipped component library - a fixed target. `/pages/*` exists for the opposite
+situation: exploring what a real product screen (a dashboard, a shell) could look like while the
+surrounding information architecture - navigation, sidebar contents, breadcrumbs - is still being
+decided. Same rigor, different scope of what's "locked."
+
+- **Every contained widget still has to be real DEW, or honestly `?`-flagged - no exceptions
+  carried over from `/test-*`.** A search field, a button, an avatar, a date picker: if it's an
+  actual interactive control, it goes through the same "no match, no substitute, no silent drop"
+  rule as a `/test-*` screen (see "Generated screens" above) - real `components/base/**`/
+  `components/application/**`/`components/foundations/**` component with its exact API, or a
+  visible `?` gap marker plus a mapping-table row, never a lookalike.
+- **Navigation/IA chrome is explicitly exempt from that fidelity, because it isn't decided yet.**
+  A primary icon rail, a contextual sidebar's nav list, a breadcrumb - anything whose job is "get
+  the user somewhere else in the product" - gets built as a simplified structural placeholder from
+  real tokens (borders, backgrounds, spacing - same "Scaffold may inherit from DEW's token
+  vocabulary" rule as everywhere else), not pixel-matched to the Figma frame's specific icons/
+  spacing and not `?`-blocked either. The point of a `/pages/*` screen is to see the content it's
+  shaped around, not to lock in a nav pattern nobody has agreed on. Once `/patterns/navigation`
+  (or a sibling) has a real, decided pattern, `/pages/*` screens should adopt it - until then, a
+  placeholder is honest, a pixel-perfect guess isn't.
+- **Same apparatus as `/test-*`, still: `InspectorProvider`/`Inspectable` hover token trace, a
+  component-mapping table below the screen, and a gap section for anything genuinely missing.**
+  Follow `app/test-site-details/page.tsx` as the closest existing template, not
+  `app/test-page/page.tsx` (too simple to show the gap-marker pattern in practice).
+- **A Figma frame's own internal annotations (a sticky note, a designer's comment layer) are not
+  product UI and don't get reproduced.** If a layer is clearly a note-to-self about the design
+  rather than something meant to render in the product (check for a comment-style visual
+  treatment - a highlighter-yellow card, a "NOTES" label - distinct from the rest of the frame's
+  real UI), leave it out of the screen and say so in the page's own notes/mapping section, the
+  same way a plain non-interactive text layer just becomes text rather than a fabricated
+  component.
+- **Not added to `lib/nav.ts`.** Same precedent as `/test-*` - these are working screens, not
+  documented product surfaces, reached by direct URL.
+- **Renders full-screen, with none of the doc site's own chrome.** A `/pages/<page-name>` screen
+  is a preview of what a real product UI shell would look like, not a documentation page, so the
+  doc site's Sidebar and its `ml-56 max-w-5xl` content column must not wrap it. This is enforced
+  structurally, not by convention: every documented, chrome-having route (home, `/primitives/**`,
+  `/components/**`, `/patterns/**`, `/config`, `/test-*`, `/llms.txt`) lives inside the
+  `app/(docs)/` route group, whose `app/(docs)/layout.tsx` renders `Sidebar` plus the constrained
+  `main`. `app/pages/**` sits outside that group entirely, so the root `app/layout.tsx` (fonts,
+  `ConfigProvider`, `Toaster`, dev-only `Agentation` - genuinely global concerns only) is the only
+  layout wrapping it. A new `/pages/<page-name>` screen should own its own full-height root
+  (`min-h-screen`) exactly like `/pages/dashboard` does - it needs to look like a real screen, not
+  a doc page with the sidebar subtracted.
+
 ## Known gaps / loose ends (as of the Avatar build)
 
 - **Avatar's whole family shipped without `font-barlow` - fixed, all 4 files.** Flagged by the
@@ -570,3 +619,78 @@ tooling, it's a reconstruction of an actual product screen. Two rules specific t
   token level in `globals.css`, so it corrected `Input`, `Select`, `ComboBox`, `MultiSelect`,
   `TagSelect`, `PinInput`, `InputDate`, `InputTags`, `InputGroup`, and the destructive `Button`
   variant all at once. Verified live via `getComputedStyle` on a rendered error input.
+- **First `/pages/<page-name>` build: `/pages/dashboard`, reconstructing the "BioData SA"
+  dashboard shell (Figma node 103:105, file `SQ58QgwP9Xz0uo3tBpuf6e`).** The first instance of
+  the new route convention documented above - proved out the "nav chrome is exempt, contained
+  widgets aren't" split in practice. Real DEW used for every contained widget: `Input` (search
+  field, `icon`/`tooltip` props doing double duty for the leading search glyph and the trailing
+  help icon - no separate `Tooltip` composition needed, it's already built into `Input`), `Button`
+  (`color="primary"` for "Upload a dataset", `color="secondary"` for "Action 2" and the four
+  quick-action buttons), `Avatar` (`initials="OW"`, Olivia Wyatt, matching the "Hi, Olivia"
+  heading), and `AlertFullWidth` for the info banner - its title/description/confirmLabel are all
+  required props even though the banner only carries one line of copy and never wires `onConfirm`,
+  same allowance already established for `AlertFloating`/`AlertFullWidth` elsewhere; `onClose` is
+  wired for real (dismisses the banner). The banner's own text, "This is where alerts go", is
+  itself a Figma placeholder instruction, not real copy - rendered verbatim as the title, same
+  convention as `/test-site-details`' literal `[Custom field name]`. One genuine gap: the
+  date-range control (chevron-left / calendar / range-text / chevron-right, styled like an Input)
+  has no real match - `input-date.tsx` is a single-value `DateField` driven by react-aria
+  `DateSegment`s, not this prev/range-text/next composition - `?`-blocked as `GapDateRange`, same
+  shape as `/test-site-details`' `GapField`. The primary icon rail, contextual sidebar, breadcrumb,
+  and footer links were built as simplified structural placeholders per the new section's nav-chrome
+  exemption - not pixel-matched, not `?`-blocked, since the surrounding IA isn't decided yet. The
+  KPI row, four metric cards, filter panel, and map-view panel are structural shells composed from
+  real tokens (`border-secondary`, `text-primary`, `text-quaternary`, `rounded-lg`) - `?`-blocking
+  a whole section would swallow everything inside it, same reasoning as `/test-site-details`'
+  `Accordion`; all logged in the mapping table as composed, candidates for future ingest. The
+  yellow "GENERAL NOTES" sticky note (node 103:225, a designer's comment layer with "Patterns" /
+  "ALA left filters" text) was excluded entirely, per the new section's annotation rule - it's not
+  product UI. One real asset had no DEW equivalent: the Government of South Australia / DEW crest
+  image (node 103:108) - downloaded and committed to `public/pages/dashboard/gov-sa-dew-logo.png`
+  rather than left as a placeholder, per the figma-design-to-code skill's asset rule, and cropped
+  in code to match Figma's own 44px sprite framing. Not added to `lib/nav.ts`, per the new
+  section's own rule. Verified `tsc`/`eslint` clean (repo-wide `eslint` shows pre-existing errors
+  in unrelated files - `input.tsx`, `input-tags.tsx`, `tooltip.tsx`, `config-context.tsx`,
+  `tag-select.tsx`, `tags.tsx`, `postcss.config.mjs` - untouched by this build, confirmed via
+  `git status`) and the route returning 200 with real rendered content from a local dev server.
+- **The Untitled UI CLI ingest that brought in `components/base/radio-groups/**` silently
+  reverted 8 already-fixed, committed files back to stock Untitled UI - caught before it could
+  land.** `avatar.tsx`, `avatar-company-icon.tsx`, `avatar-count.tsx`, `avatar-online-indicator.tsx`,
+  `badges.tsx`, `button.tsx`, `checkbox.tsx`, and `tooltip.tsx` all showed up modified in the
+  working tree despite nobody touching them - every diff stripped a real, previously-audited DEW
+  fix (dropped `font-barlow`, reverted `Avatar`'s `rounded` prop and outline-colour fix, reverted
+  `Badge`'s Figma-audited padding back to stock `py-2`, rewrote `Button`'s whole prop-typing
+  approach). Exactly the "parallel batch is exactly where a stray regression hides" pattern
+  documented earlier in this file, just triggered by a CLI re-run instead of a parallel agent
+  batch - **any CLI ingest can silently touch shared files beyond the component being installed,
+  not just brand-new ones, so `git status`/`git diff` after every ingest is not optional.** Fixed
+  by `git checkout --` on all 8 files to restore them to `HEAD` exactly (confirmed via `git diff`
+  showing no changes to them afterward) before touching the new component at all.
+- **`radio-groups` ingest (`components/base/radio-groups/**`, 6 files: `radio-group-icon-simple`,
+  `radio-group-icon-card`, `radio-group-avatar`, `radio-group-payment-icon`,
+  `radio-group-radio-button`, `radio-group-checkbox`, re-exported as `IconSimple`/`IconCard`/
+  `Avatar`/`PaymentIcon`/`RadioButton`/`Checkbox` from `radio-groups.tsx`) fixed two gaps, both
+  the same recurring shape already logged for Avatar and Radio buttons above.** (1) None of the 6
+  files had `font-barlow` on their `AriaRadio` item root - added to all 6, same fix location as
+  `RadioButton` in `components/base/radio-buttons/radio-buttons.tsx`. (2) All 6 referenced a
+  `disabled`-token family that has never existed in this repo's token layer at all -
+  `bg-disabled_subtle`, `ring-disabled`, `ring-disabled_subtle`, `bg-disabled`, `text-fg-disabled`,
+  `bg-fg-disabled_subtle` - none defined in `app/globals.css` or `styles/theme.css` (confirmed via
+  grep, zero hits), so every disabled card rendered with no visual treatment beyond
+  `cursor-not-allowed`, silently. Rather than inventing six new tokens nothing else in DEW uses,
+  brought them in line with the disabled pattern every other DEW form control already uses
+  (`Checkbox`, `RadioButtonBase`, `ToggleBase`: `cursor-not-allowed opacity-50`, nothing more) -
+  removed the undefined classes and their inner-element echoes (a disabled `FeaturedIcon` override,
+  a disabled inner-dot fill) since the outer `opacity-50` already dims every descendant. No Figma
+  frame exists for this component (same as Radio buttons) - shipped with an honest "not linked
+  yet" Figma section. `RadioButton`'s and `Checkbox`'s item types both declare an `icon` field
+  that the component never renders - left as-is and documented in the API table for accuracy, same
+  precedent as `Avatar`'s dead `contrastBorder` prop, not silently dropped or wired up beyond
+  scope. Slotted alphabetically: `radio-groups` in `config/design-system.config.ts` and
+  `lib/nav.ts` between `radio-buttons` and `select`. Doc page built at
+  `app/(docs)/components/radio-groups/page.tsx` following the established template - Playground
+  with a type/size/disabled control set, a Types section demonstrating all 6 layouts, Sizes,
+  Disabled, a shared common-props table plus one item-shape table per variant, Usage, Figma.
+  Verified `tsc`/`eslint` clean and the route rendering all 6 variants with real content
+  (including the Olivia Wyatt/Phoenix Baker/Lana Steiner placeholder trio for the Avatar variant)
+  from a local dev server.

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Barlow, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Agentation } from "agentation";
-import { Sidebar } from "@/components/Sidebar";
 import { Toaster } from "@/components/application/toast/toast";
 import { ConfigProvider } from "@/lib/config-context";
 
@@ -41,10 +40,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geist.variable} ${geistMono.variable} ${barlow.variable} font-sans`} suppressHydrationWarning>
         <ConfigProvider>
-          <Sidebar />
-          <main className="ml-56 min-h-screen px-12 py-10 max-w-5xl">
-            {children}
-          </main>
+          {children}
           <Toaster />
           {process.env.NODE_ENV === "development" && <Agentation />}
         </ConfigProvider>
