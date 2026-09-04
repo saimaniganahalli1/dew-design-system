@@ -4,7 +4,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { Checkbox } from "@/components/base/checkbox/checkbox";
 import { Button } from "@/components/base/buttons/button";
 import { useConfig } from "@/lib/config-context";
-import type { VariantOption } from "@/config/design-system.config";
+import type { ComponentConfig, VariantOption } from "@/config/design-system.config";
+import { ChevronDown } from "@untitledui/icons";
 
 const CATEGORY_LABEL: Record<"colors" | "sizes" | "types", string> = {
   colors: "Colours",
@@ -67,8 +68,54 @@ function FeatureGroup({ slug, features }: { slug: string; features: Record<strin
   );
 }
 
+function ConfigAccordionItem({ slug, componentConfig }: { slug: string; componentConfig: ComponentConfig }) {
+  const { setComponentEnabled } = useConfig();
+
+  return (
+    <details
+      className="group rounded-xl"
+      style={{
+        border: "1px solid var(--color-gray-200)",
+        background: componentConfig.enabled ? "var(--color-gray-25)" : "var(--color-gray-50)",
+        opacity: componentConfig.enabled ? 1 : 0.6,
+      }}
+    >
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 [&::-webkit-details-marker]:hidden">
+        <div onClick={(event) => event.stopPropagation()}>
+          <Checkbox
+            size="md"
+            label={componentConfig.title}
+            hint={`/components/${slug}`}
+            isSelected={componentConfig.enabled}
+            onChange={(enabled) => setComponentEnabled(slug, enabled)}
+          />
+        </div>
+        <ChevronDown
+          aria-hidden="true"
+          className="size-5 shrink-0 text-quaternary transition-transform duration-200 group-open:rotate-180"
+        />
+      </summary>
+
+      <div className="flex flex-col gap-4 px-5 pb-5 pt-4" style={{ borderTop: "1px solid var(--color-gray-200)" }}>
+        {componentConfig.colors && componentConfig.colors.length > 0 && (
+          <VariantGroup slug={slug} category="colors" options={componentConfig.colors} />
+        )}
+        {componentConfig.sizes && componentConfig.sizes.length > 0 && (
+          <VariantGroup slug={slug} category="sizes" options={componentConfig.sizes} />
+        )}
+        {componentConfig.types && componentConfig.types.length > 0 && (
+          <VariantGroup slug={slug} category="types" options={componentConfig.types} />
+        )}
+        {componentConfig.features && Object.keys(componentConfig.features).length > 0 && (
+          <FeatureGroup slug={slug} features={componentConfig.features} />
+        )}
+      </div>
+    </details>
+  );
+}
+
 export default function ConfigPage() {
-  const { config, setComponentEnabled, resetToDefaults } = useConfig();
+  const { config, resetToDefaults } = useConfig();
   const entries = Object.entries(config);
 
   return (
@@ -90,40 +137,7 @@ export default function ConfigPage() {
 
       <div className="flex flex-col gap-4">
         {entries.map(([slug, componentConfig]) => (
-          <div
-            key={slug}
-            className="rounded-xl p-5"
-            style={{
-              border: "1px solid var(--color-gray-200)",
-              background: componentConfig.enabled ? "var(--color-gray-25)" : "var(--color-gray-50)",
-              opacity: componentConfig.enabled ? 1 : 0.6,
-            }}
-          >
-            <div className="flex items-center justify-between mb-4 pb-4" style={{ borderBottom: "1px solid var(--color-gray-200)" }}>
-              <Checkbox
-                size="md"
-                label={componentConfig.title}
-                hint={`/components/${slug}`}
-                isSelected={componentConfig.enabled}
-                onChange={(enabled) => setComponentEnabled(slug, enabled)}
-              />
-            </div>
-
-            <div className="flex flex-col gap-4">
-              {componentConfig.colors && componentConfig.colors.length > 0 && (
-                <VariantGroup slug={slug} category="colors" options={componentConfig.colors} />
-              )}
-              {componentConfig.sizes && componentConfig.sizes.length > 0 && (
-                <VariantGroup slug={slug} category="sizes" options={componentConfig.sizes} />
-              )}
-              {componentConfig.types && componentConfig.types.length > 0 && (
-                <VariantGroup slug={slug} category="types" options={componentConfig.types} />
-              )}
-              {componentConfig.features && Object.keys(componentConfig.features).length > 0 && (
-                <FeatureGroup slug={slug} features={componentConfig.features} />
-              )}
-            </div>
-          </div>
+          <ConfigAccordionItem key={slug} slug={slug} componentConfig={componentConfig} />
         ))}
       </div>
     </div>
