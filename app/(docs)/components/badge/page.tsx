@@ -9,6 +9,7 @@ import { ContextualConfigPanel } from "@/components/ContextualConfigPanel";
 import { Star01, Check, Zap } from "@untitledui/icons";
 import type { BadgeColors, BadgeTypes, Sizes } from "@/components/base/badges/badge-types";
 import {
+  ScaffoldCheckbox,
   ScaffoldLabel,
   ScaffoldTextInput,
   SegmentedControl,
@@ -40,6 +41,7 @@ const props = [
   { name: "type",     type: '"pill-color" | "color" | "modern"', default: '"pill-color"' },
   { name: "size",     type: '"sm" | "md" | "lg"',                default: '"md"' },
   { name: "color",    type: "BadgeColors (12 options)",          default: '"gray"' },
+  { name: "background", type: "boolean (BadgeWithDot pill-color)", default: "true" },
   { name: "children", type: "ReactNode",                          default: "-" },
 ];
 
@@ -58,6 +60,7 @@ export default function BadgePage() {
     size: "md" as Sizes,
     label: "Badge",
     style: "plain" as PlaygroundStyle,
+    background: true,
   };
 
   const [previewType, setPreviewType] = useState(defaults.type);
@@ -65,13 +68,15 @@ export default function BadgePage() {
   const [previewSize, setPreviewSize] = useState(defaults.size);
   const [previewLabel, setPreviewLabel] = useState(defaults.label);
   const [previewStyle, setPreviewStyle] = useState(defaults.style);
+  const [previewBackground, setPreviewBackground] = useState(defaults.background);
 
   const isDefault =
     previewType === defaults.type &&
     previewColor === defaults.color &&
     previewSize === defaults.size &&
     previewLabel === defaults.label &&
-    previewStyle === defaults.style;
+    previewStyle === defaults.style &&
+    previewBackground === defaults.background;
 
   const resetPreview = () => {
     setPreviewType(defaults.type);
@@ -79,6 +84,7 @@ export default function BadgePage() {
     setPreviewSize(defaults.size);
     setPreviewLabel(defaults.label);
     setPreviewStyle(defaults.style);
+    setPreviewBackground(defaults.background);
   };
 
   return (
@@ -106,7 +112,7 @@ export default function BadgePage() {
               >
                 <div className="flex min-h-16 items-center justify-center rounded-xl bg-primary px-8 py-6 shadow-md">
                   {previewStyle === "dot" && (
-                    <BadgeWithDot type={previewType} color={previewColor} size={previewSize}>
+                    <BadgeWithDot type={previewType} color={previewColor} size={previewSize} background={previewBackground}>
                       {previewLabel}
                     </BadgeWithDot>
                   )}
@@ -128,6 +134,7 @@ export default function BadgePage() {
                 </div>
                 <code className="text-xs text-quaternary">
                   {previewType} · {previewColor} · {previewSize}
+                  {previewStyle === "dot" && previewType === "pill-color" && ` · ${previewBackground ? "background" : "no background"}`}
                 </code>
               </div>
 
@@ -188,6 +195,10 @@ export default function BadgePage() {
                 </div>
 
                 <ScaffoldTextInput label="Label" value={previewLabel} onChange={setPreviewLabel} />
+
+                {previewStyle === "dot" && previewType === "pill-color" && (
+                  <ScaffoldCheckbox label="Background" checked={previewBackground} onChange={setPreviewBackground} />
+                )}
               </div>
             </div>
           </div>
@@ -242,13 +253,27 @@ export default function BadgePage() {
       {isFeatureEnabled(config, "withDot") && (
         <>
           <h2 className="text-balance">With dot</h2>
-          <p className="text-balance">A leading status dot - most common for live/active states.</p>
-          <Section label="Dot indicator">
-            <BadgeWithDot color="success">Online</BadgeWithDot>
-            <BadgeWithDot color="gray">Offline</BadgeWithDot>
-            <BadgeWithDot color="warning">Away</BadgeWithDot>
-            <BadgeWithDot color="error">Do not disturb</BadgeWithDot>
-          </Section>
+          <p className="text-balance">A leading status dot - most common for live/active states. Figma defines filled, backgroundless, and square badge-colour dot styles.</p>
+          <div className="flex flex-col gap-4 mt-4">
+            <Section label="Filled pill">
+              <BadgeWithDot color="success">Online</BadgeWithDot>
+              <BadgeWithDot color="gray">Offline</BadgeWithDot>
+              <BadgeWithDot color="warning">Away</BadgeWithDot>
+              <BadgeWithDot color="error">Do not disturb</BadgeWithDot>
+            </Section>
+            <Section label="No background">
+              <BadgeWithDot type="pill-color" color="success" background={false}>Online</BadgeWithDot>
+              <BadgeWithDot type="pill-color" color="gray" background={false}>Offline</BadgeWithDot>
+              <BadgeWithDot type="pill-color" color="warning" background={false}>Away</BadgeWithDot>
+              <BadgeWithDot type="pill-color" color="error" background={false}>Do not disturb</BadgeWithDot>
+            </Section>
+            <Section label="Square colour">
+              <BadgeWithDot type="color" color="brand">Brand</BadgeWithDot>
+              <BadgeWithDot type="color" color="success">Success</BadgeWithDot>
+              <BadgeWithDot type="color" color="warning">Warning</BadgeWithDot>
+              <BadgeWithDot type="color" color="error">Error</BadgeWithDot>
+            </Section>
+          </div>
         </>
       )}
 
@@ -372,7 +397,7 @@ export default function BadgePage() {
       {isFeatureEnabled(config, "figma") && (
         <>
           <h2 className="text-balance">Figma</h2>
-          <p className="text-balance">No linked Figma file yet - this component was pulled in via the Untitled UI CLI, not designed in Figma first.</p>
+          <p className="text-balance">Source: <a href="https://www.figma.com/design/llQ4DndM7U0la4qg6MttC5/DS---Foundations?node-id=19066-23220&p=f&t=9IGWUEb0S5F9VJDU-11">DS - Foundations / Badges</a>. The documented set now includes the Figma backgroundless dot pill variation.</p>
         </>
       )}
     </div>
