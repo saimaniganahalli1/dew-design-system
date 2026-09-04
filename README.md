@@ -1,17 +1,23 @@
+# Dew Design System
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-First, run the development server:
+Requires Node.js 20+.
+
+Clone the repo and install dependencies:
+
+```bash
+git clone https://github.com/saimaniganahalli1/dew-design-system.git
+cd dew-design-system
+npm install
+```
+
+Then run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
