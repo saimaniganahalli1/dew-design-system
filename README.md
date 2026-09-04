@@ -48,7 +48,7 @@ The docs site (`app/(docs)`) is organized into three sections: **primitives** (d
 | --- | --- |
 | [Alert](/components/alert) | Dismissible banner - floating and full-width layouts, 6 colours, composed from Button/CloseButton/FeaturedIcon. |
 | [Avatar](/components/avatar) | User representation - sizes, colour variants, and avatar groups. |
-| [Badge](/components/badge) | Status labels - 3 types, 12 colours, dot/icon/dismiss variants. |
+| [Badge](/components/badge) | Status labels - pill and badge-colour styles, 5 documented colours, dot/icon/dismiss variants. |
 | [Button](/components/button) | Primary action trigger - 8 colour variants, 5 sizes, icon and loading states. |
 | [Checkbox](/components/checkbox) | Binary selection control with an indeterminate state and two sizes. |
 | [Input](/components/input) | Text field plus specialised variants - password, date, number, payment, tags, file upload, PIN. |

@@ -100,15 +100,14 @@ export const designSystemConfig: DesignSystemConfig = {
   badge: {
     title: "Badge",
     enabled: true,
-    // Figma's "Badge" documentation frame (node 100:20530) only defines two types - "Pill
-    // color" and "Badge Color" - across five colours (Brand/Warning/Success/Error/Gray). There
-    // is no "Modern" type symbol anywhere in the frame, and no swatches for the other 7 colours
-    // the component's real BadgeColors type supports. Trimmed to match, per "Figma is the
-    // source of truth" - both stay real, working values in badges.tsx/badge-types.ts and in the
-    // API table below (never invent or drop a prop), they just aren't demonstrated here.
+    // Figma's "Badge" component set (node 19066:23221) defines "Pill color" and "Badge
+    // Color" across five colours (Brand/Warning/Success/Error/Gray), with dot variants for
+    // filled, backgroundless pill, and square badge-colour styles. The component's broader
+    // Untitled UI values still work in badges.tsx/badge-types.ts; only the Figma-documented
+    // subset is demonstrated here.
     types: [
       { key: "pill-color", label: "Pill colour", enabled: true },
-      { key: "color",      label: "Colour",      enabled: true },
+      { key: "color",      label: "Badge colour", enabled: true },
     ],
     colors: [
       { key: "gray",    label: "Gray",    enabled: true },

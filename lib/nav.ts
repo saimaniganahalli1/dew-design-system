@@ -30,7 +30,7 @@ export const rawNav: NavSection[] = [
     items: [
       { title: "Alert", href: "/components/alert", description: "Dismissible banner - floating and full-width layouts, 6 colours, composed from Button/CloseButton/FeaturedIcon." },
       { title: "Avatar", href: "/components/avatar", description: "User representation - sizes, colour variants, and avatar groups." },
-      { title: "Badge", href: "/components/badge", description: "Status labels - 3 types, 12 colours, dot/icon/dismiss variants." },
+      { title: "Badge", href: "/components/badge", description: "Status labels - pill and badge-colour styles, 5 documented colours, dot/icon/dismiss variants." },
       { title: "Button", href: "/components/button", description: "Primary action trigger - 8 colour variants, 5 sizes, icon and loading states." },
       { title: "Checkbox", href: "/components/checkbox", description: "Binary selection control with an indeterminate state and two sizes." },
       { title: "Input", href: "/components/input", description: "Text field plus specialised variants - password, date, number, payment, tags, file upload, PIN." },

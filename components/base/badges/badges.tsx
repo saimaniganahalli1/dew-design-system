@@ -7,68 +7,85 @@ import { cx } from "@/utils/cx";
 import type { BadgeColors, BadgeTypeToColorMap, BadgeTypes, FlagTypes, IconComponentType, Sizes } from "./badge-types";
 import { badgeTypes } from "./badge-types";
 
-export const filledColors: Record<BadgeColors, { root: string; addon: string; addonButton: string }> = {
+export const filledColors: Record<BadgeColors, { root: string; text: string; addon: string; addonButton: string }> = {
     gray: {
         root: "bg-utility-neutral-50 text-utility-neutral-700 ring-utility-neutral-200",
+        text: "text-utility-neutral-700",
         addon: "text-utility-neutral-500",
         addonButton: "hover:bg-utility-neutral-100 text-utility-neutral-400 hover:text-utility-neutral-500",
     },
     brand: {
         root: "bg-utility-brand-50 text-utility-brand-700 ring-utility-brand-200",
+        text: "text-utility-brand-700",
         addon: "text-utility-brand-500",
         addonButton: "hover:bg-utility-brand-100 text-utility-brand-400 hover:text-utility-brand-500",
     },
     error: {
         root: "bg-utility-red-50 text-utility-red-700 ring-utility-red-200",
+        text: "text-utility-red-700",
         addon: "text-utility-red-500",
         addonButton: "hover:bg-utility-red-100 text-utility-red-400 hover:text-utility-red-500",
     },
     warning: {
         root: "bg-utility-yellow-50 text-utility-yellow-700 ring-utility-yellow-200",
+        text: "text-utility-yellow-700",
         addon: "text-utility-yellow-500",
         addonButton: "hover:bg-utility-yellow-100 text-utility-yellow-400 hover:text-utility-yellow-500",
     },
     success: {
         root: "bg-utility-green-50 text-utility-green-700 ring-utility-green-200",
+        text: "text-utility-green-700",
         addon: "text-utility-green-500",
         addonButton: "hover:bg-utility-green-100 text-utility-green-400 hover:text-utility-green-500",
     },
     slate: {
         root: "bg-utility-slate-50 text-utility-slate-700 ring-utility-slate-200",
+        text: "text-utility-slate-700",
         addon: "text-utility-slate-500",
         addonButton: "hover:bg-utility-slate-100 text-utility-slate-400 hover:text-utility-slate-500",
     },
     sky: {
         root: "bg-utility-sky-50 text-utility-sky-700 ring-utility-sky-200",
+        text: "text-utility-sky-700",
         addon: "text-utility-sky-500",
         addonButton: "hover:bg-utility-sky-100 text-utility-sky-400 hover:text-utility-sky-500",
     },
     blue: {
         root: "bg-utility-blue-50 text-utility-blue-700 ring-utility-blue-200",
+        text: "text-utility-blue-700",
         addon: "text-utility-blue-500",
         addonButton: "hover:bg-utility-blue-100 text-utility-blue-400 hover:text-utility-blue-500",
     },
     indigo: {
         root: "bg-utility-indigo-50 text-utility-indigo-700 ring-utility-indigo-200",
+        text: "text-utility-indigo-700",
         addon: "text-utility-indigo-500",
         addonButton: "hover:bg-utility-indigo-100 text-utility-indigo-400 hover:text-utility-indigo-500",
     },
     purple: {
         root: "bg-utility-purple-50 text-utility-purple-700 ring-utility-purple-200",
+        text: "text-utility-purple-700",
         addon: "text-utility-purple-500",
         addonButton: "hover:bg-utility-purple-100 text-utility-purple-400 hover:text-utility-purple-500",
     },
     pink: {
         root: "bg-utility-pink-50 text-utility-pink-700 ring-utility-pink-200",
+        text: "text-utility-pink-700",
         addon: "text-utility-pink-500",
         addonButton: "hover:bg-utility-pink-100 text-utility-pink-400 hover:text-utility-pink-500",
     },
     orange: {
         root: "bg-utility-orange-50 text-utility-orange-700 ring-utility-orange-200",
+        text: "text-utility-orange-700",
         addon: "text-utility-orange-500",
         addonButton: "hover:bg-utility-orange-100 text-utility-orange-400 hover:text-utility-orange-500",
     },
 };
+
+const backgroundlessDotColors = Object.fromEntries(Object.entries(filledColors).map(([key, value]) => [key, { root: value.text, addon: value.addon }])) as Record<
+    BadgeColors,
+    { root: string; addon: string }
+>;
 
 const addonOnlyColors = Object.fromEntries(Object.entries(filledColors).map(([key, value]) => [key, { root: "", addon: value.addon }])) as Record<
     BadgeColors,
@@ -152,25 +169,28 @@ interface BadgeWithDotProps<T extends BadgeTypes> {
     type?: T;
     size?: Sizes;
     color?: BadgeTypeToColorMap<typeof withBadgeTypes>[T];
+    background?: boolean;
     className?: string;
     children: ReactNode;
 }
 
 export const BadgeWithDot = <T extends BadgeTypes>(props: BadgeWithDotProps<T>) => {
-    const { size = "md", color = "gray", type = "pill-color", className, children } = props;
+    const { size = "md", color = "gray", type = "pill-color", background = true, className, children } = props;
 
     const colors = withBadgeTypes[type];
+    const isBackgroundless = type === badgeTypes.pillColor && !background;
+    const backgroundlessColors = backgroundlessDotColors[color as BadgeColors];
 
     const pillSizes = {
-        sm: "gap-1 py-1.5 pl-1.5 pr-2 text-xs font-medium",
-        md: "gap-1.5 py-2 pl-2 pr-2.5 text-sm font-medium",
-        lg: "gap-1.5 py-2 pl-2.5 pr-3 text-md font-medium",
+        sm: "gap-1 py-0.5 pl-1.5 pr-2 text-xs font-medium",
+        md: "gap-1.5 py-0.5 pl-2 pr-2.5 text-sm font-medium",
+        lg: "gap-1.5 py-1 pl-2.5 pr-3 text-sm font-medium",
     };
 
     const badgeSizes = {
-        sm: "gap-1 py-1.5 px-1.5 text-xs font-medium",
-        md: "gap-1.5 py-2 px-2 text-sm font-medium",
-        lg: "gap-1.5 py-2 px-2.5 text-md font-medium rounded-lg",
+        sm: "gap-1 py-0.5 px-1.5 text-xs font-medium",
+        md: "gap-1.5 py-0.5 px-2 text-sm font-medium",
+        lg: "gap-1.5 py-1 px-2.5 text-sm font-medium rounded-lg",
     };
 
     const sizes = {
@@ -180,8 +200,15 @@ export const BadgeWithDot = <T extends BadgeTypes>(props: BadgeWithDotProps<T>) 
     };
 
     return (
-        <span className={cx(colors.common, sizes[type][size], colors.styles[color].root, className)}>
-            <Dot className={colors.styles[color].addon} size="sm" />
+        <span
+            className={cx(
+                isBackgroundless ? "font-barlow size-max flex items-center whitespace-nowrap" : colors.common,
+                sizes[type][size],
+                isBackgroundless ? backgroundlessColors.root : colors.styles[color].root,
+                className,
+            )}
+        >
+            <Dot className={isBackgroundless ? backgroundlessColors.addon : colors.styles[color].addon} size="sm" />
             {children}
         </span>
     );
