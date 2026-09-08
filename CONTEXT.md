@@ -27,6 +27,12 @@ matter how complete it otherwise looks.
   session.** A resolved `?` gap gets its placeholder swapped, its gap table updated, and its
   mapping table updated together. See "Generated screens" below.
 - **No em-dashes** in this file or in any doc-page/component copy - hyphens only.
+- **No arrow characters standing in for an icon - not `->`, not `→`.** `Button` (`components/base/
+  buttons/button.tsx`) takes an `iconTrailing` prop on every color variant, including `link-color` -
+  a "go to X" affordance uses `<Button color="link-color" iconTrailing={ArrowNarrowRight}>Go to
+  X</Button>`, a real icon, never a character appended to the label text. Caught after the fact:
+  every such button across `/projects/*` originally read `{label} →` as plain text - fixed to use
+  the icon prop instead, per the user directly.
 - **Geist stays Geist, Barlow stays Barlow** - Scaffold text never borrows `font-barlow` to match
   a DEW neighbour, and vice versa, except inside a generated screen where everything is Barlow.
 - **No fabricated Figma links, no fabricated icons/assets, no invented props.** An honest "not
@@ -308,7 +314,7 @@ tooling, it's a reconstruction of an actual product screen. Two rules specific t
   are added/removed - so toggling the inspector off never shifts layout. Any new `/test-*` page
   must be built with this from the start, not bolted on after.
 
-## Exploratory page layouts (`/pages/<page-name>`)
+## Exploratory page layouts (`/pages/<page-name>`, `/projects/<page-name>/<variant>`)
 
 A `/pages/<page-name>` route is a different thing again from both a doc page and a `/test-*`
 generated screen. `/test-*` exists to prove one specific, already-decided Figma frame maps 1:1
@@ -317,12 +323,19 @@ situation: exploring what a real product screen (a dashboard, a shell) could loo
 surrounding information architecture - navigation, sidebar contents, breadcrumbs - is still being
 decided. Same rigor, different scope of what's "locked."
 
+`/projects/<page-name>/<variant>` (e.g. `/projects/dashboard/option-1`, `/projects/dashboard/option-2`)
+is the same kind of thing, one level further out: multiple competing layout explorations of the
+*same* screen, sitting side by side while the screen's own purpose/IA is still being decided, not
+just its chrome. Every rule below applies equally to both - the only difference is `/pages/*` is
+one committed direction, `/projects/<page-name>/*` is several not-yet-chosen ones.
+
 - **Every contained widget still has to be real DEW, or honestly `?`-flagged - no exceptions
   carried over from `/test-*`.** A search field, a button, an avatar, a date picker: if it's an
   actual interactive control, it goes through the same "no match, no substitute, no silent drop"
   rule as a `/test-*` screen (see "Generated screens" above) - real `components/base/**`/
   `components/application/**`/`components/foundations/**` component with its exact API, or a
-  visible `?` gap marker plus a mapping-table row, never a lookalike.
+  visible `?` gap marker inline in the screen (see `GapDateRange` in
+  `/projects/dashboard/option-1`), never a lookalike.
 - **Navigation/IA chrome is explicitly exempt from that fidelity, because it isn't decided yet.**
   A primary icon rail, a contextual sidebar's nav list, a breadcrumb - anything whose job is "get
   the user somewhere else in the product" - gets built as a simplified structural placeholder from
@@ -332,10 +345,13 @@ decided. Same rigor, different scope of what's "locked."
   shaped around, not to lock in a nav pattern nobody has agreed on. Once `/patterns/navigation`
   (or a sibling) has a real, decided pattern, `/pages/*` screens should adopt it - until then, a
   placeholder is honest, a pixel-perfect guess isn't.
-- **Same apparatus as `/test-*`, still: `InspectorProvider`/`Inspectable` hover token trace, a
-  component-mapping table below the screen, and a gap section for anything genuinely missing.**
-  Follow `app/test-site-details/page.tsx` as the closest existing template, not
-  `app/test-page/page.tsx` (too simple to show the gap-marker pattern in practice).
+- **None of `/test-*`'s review apparatus - no `InspectorProvider`/`Inspectable` hover trace, no
+  component-mapping table, no gap section.** That apparatus is for proving a fixed, already-decided
+  Figma frame maps 1:1 onto the shipped component library - it belongs to `/test-*` only. `/pages/*`
+  is reserved strictly for building product page layouts: it should look and feel like the real
+  screen it's previewing, not a doc/review surface. Follow
+  `app/projects/dashboard/option-1/page.tsx` as the template for a new `/pages/<page-name>` or
+  `/projects/<page-name>/<variant>` screen, not `app/test-site-details/page.tsx`.
 - **A Figma frame's own internal annotations (a sticky note, a designer's comment layer) are not
   product UI and don't get reproduced.** If a layer is clearly a note-to-self about the design
   rather than something meant to render in the product (check for a comment-style visual
@@ -345,17 +361,185 @@ decided. Same rigor, different scope of what's "locked."
   component.
 - **Not added to `lib/nav.ts`.** Same precedent as `/test-*` - these are working screens, not
   documented product surfaces, reached by direct URL.
-- **Renders full-screen, with none of the doc site's own chrome.** A `/pages/<page-name>` screen
-  is a preview of what a real product UI shell would look like, not a documentation page, so the
-  doc site's Sidebar and its `ml-56 max-w-5xl` content column must not wrap it. This is enforced
-  structurally, not by convention: every documented, chrome-having route (home, `/primitives/**`,
-  `/components/**`, `/patterns/**`, `/config`, `/test-*`, `/llms.txt`) lives inside the
-  `app/(docs)/` route group, whose `app/(docs)/layout.tsx` renders `Sidebar` plus the constrained
-  `main`. `app/pages/**` sits outside that group entirely, so the root `app/layout.tsx` (fonts,
-  `ConfigProvider`, `Toaster`, dev-only `Agentation` - genuinely global concerns only) is the only
-  layout wrapping it. A new `/pages/<page-name>` screen should own its own full-height root
-  (`min-h-screen`) exactly like `/pages/dashboard` does - it needs to look like a real screen, not
-  a doc page with the sidebar subtracted.
+- **Renders full-screen, with none of the doc site's own chrome.** A `/pages/<page-name>` or
+  `/projects/<page-name>/<variant>` screen is a preview of what a real product UI shell would look
+  like, not a documentation page, so the doc site's Sidebar and its `ml-56 max-w-5xl` content
+  column must not wrap it. This is enforced structurally, not by convention: every documented,
+  chrome-having route (home, `/primitives/**`, `/components/**`, `/patterns/**`, `/config`,
+  `/test-*`, `/llms.txt`) lives inside the `app/(docs)/` route group, whose `app/(docs)/layout.tsx`
+  renders `Sidebar` plus the constrained `main`. `app/pages/**` and `app/projects/**` sit outside
+  that group entirely, so the root `app/layout.tsx` (fonts, `ConfigProvider`, `Toaster`, dev-only
+  `Agentation` - genuinely global concerns only) is the only layout wrapping them. A new screen
+  should own its own full-height root (`min-h-screen`) exactly like
+  `app/projects/dashboard/option-1/page.tsx` does - it needs to look like a real screen, not a doc
+  page with the sidebar subtracted.
+
+## Custom components (`components/custom/**`)
+
+A `?`-blocked gap marker (see "Generated screens" above) is the default for a widget with no real
+DEW match - honest, but inert. Once a gap's shape is clear enough to actually build (real
+interaction, not a static mock), it can graduate into `components/custom/<name>/` instead of
+staying `?`-blocked forever. This is a third tier alongside `components/base/**` and
+`components/application/**`, for exactly one purpose: real, working components that don't have a
+stakeholder-decided home yet.
+
+- **Still built from real primitives - react-aria, existing DEW components (`Popover`, `Button`,
+  etc.) - never invented from scratch.** The bar for *how* it's built doesn't drop just because
+  it's not officially adopted yet; only the "is this locked into the design system" question is
+  still open.
+- **Documented under the "Custom Components" nav section (`/custom-components/<name>`), not
+  "Components".** Same doc-page apparatus (`PageHeader`, an API table, a usage snippet) but lighter
+  - no `config/design-system.config.ts` entry, no live variant-driven playground - since there's
+    nothing to configure yet for a component whose API isn't settled. See
+  `app/(docs)/custom-components/date-range/page.tsx`.
+- **Promotion is a move, not a rebuild.** Once a stakeholder picks a direction, the file moves from
+  `components/custom/<name>/` to `components/base/` or `components/application/`, its doc page
+  moves from "Custom Components" to "Components" (plus a real `design-system.config.ts` entry if it
+  needs variants), and every `/pages/*`/`/projects/*` screen using it is repointed at the new
+  import path. If the direction changes instead, the custom component gets replaced, same as any
+  other gap would.
+- **First instance: `components/custom/date-range/date-range-control.tsx`.** Replaced the
+  `GapDateRange` `?`-marker in `app/projects/dashboard/option-1/page.tsx` - a real prev-arrow /
+  calendar / range-text / next-arrow control (react-aria `RangeCalendar` + `DialogTrigger`, the
+  real DEW `Popover` for the overlay shell), documented at `/custom-components/date-range`.
+
+## BDBSA domain research
+
+The `/projects/*` explorations aren't built from invented content where the real thing is publicly
+documented - the Biological Databases of South Australia (BDBSA) is a real DEW program with its own
+published fact sheets, and every screen modelling it should stay consistent with what those actually
+say. Captured here so the next screen/decision starts from the same grounding instead of re-deriving
+or drifting from it. Sources:
+[BDBSA overview](https://www.environment.sa.gov.au/topics/science/information-and-data/biological-databases-of-south-australia),
+[BDBSA overview fact sheet (PDF)](https://data.environment.sa.gov.au/Content/Publications/bdbsa-overview-fact.pdf),
+[BDBSA SuperTables overview (PDF)](https://data.environment.sa.gov.au/Content/Publications/bdbsa-supertable-overview-fact.pdf).
+
+- **What it is.** BDBSA is DEW's centralised repository for South Australian flora/fauna specimen
+  and observation records and taxonomic systems - it supports environmental management, research,
+  and conservation planning by making biodiversity data accessible.
+- **Data hierarchy: Project → Site → Observation → Occurrence.** Projects are the mandatory
+  top-level container - **"all data entered into the BDBSA must be assigned to a project
+  number."** This directly confirms the "Project as container" reframing from the other designer's
+  Projects Figma (see `app/projects/project-detail/option-1`'s comment) and the nested-records tree
+  already built there (Site/Observation/Occurrence/Visit/Transect/Quadrat/Block/Ramble/Trap/Custom
+  Event) - not an invented shape.
+- **"If data does not belong with an existing BDBSA project, you can register a new project"** -
+  by completing an online project registration form, or emailing DEWBioDataSupport@sa.gov.au. This
+  is a real, sourced requirement for the "create a project inline while uploading a dataset that
+  doesn't have one yet" flow discussed earlier (see the HoneyBook/Fabric Mobbin research) - it's not
+  a hypothetical nicety, registered users will actually hit this constantly.
+- **Real partner organisations named in BDBSA's own material: BirdLife Australia, Birds SA
+  (SAOA), and the South Australian Museum.** `Birds SA` was already used as an example org in
+  `project-list`'s sample rows - confirmed real, not a placeholder guess. `BirdLife Australia` and
+  `South Australian Museum` are two more real names to reach for instead of inventing fresh ones in
+  future example content.
+- **Access tiers and sensitive data, at the project level.** BDBSA runs an open-access policy by
+  default, but **"when a whole dataset is considered sensitive it will be flagged at the project
+  level and only distributed under license or with appropriate approval"** - sensitive species'
+  precise locations are withheld from general access even when the rest of a project's data is
+  public. This is exactly the Level 1 (public) / Level 2 (DLA-licensed) split already named in
+  `lib/registered-user-nav.ts`'s Observations/Projects items, and it's a project-level flag, not a
+  per-record toggle - worth keeping in mind if/when that gets real UI.
+
+## Registered User dashboard scope
+
+The dashboard's actual job for a `registered-user`, given directly by the user rather than inferred:
+it's a personal request/activity tracker, not a chart-heavy BI surface (see the earlier "for-you
+page vs. reporting surface" framing this confirms). A registered user needs to see, at minimum:
+
+- **Their DLA (Data Licensing Agreement) requests** - status of anything they've requested access
+  under (`lib/registered-user-nav.ts`'s "Data Licencing Agreement (DLA)" section already has
+  "Request New DLA"/"Manage DLA" as the two real operations this view would surface).
+- **Their sensitive species nominations** - status of anything nominated via "Nominate Sensitive
+  Species".
+- **Datasets they've uploaded** - their own contributions to the BioData SA portal.
+- **Projects they've created**, plus the ability to add more data to an existing one - the
+  project-as-container model above means "add data to a project" is the core recurring action, not
+  a one-off.
+
+Not yet built - this is scope, not an implementation. The existing dashboard body
+(`app/projects/dashboard/option-1`, `option-2`) still has the placeholder KPI/metric-card/map
+content from before this was scoped; it should eventually be replaced with real widgets for the
+four items above rather than generic biodiversity stats, once that redesign is actually done.
+
+## User roles
+
+The BioData SA portal has six tiers - the slugs below are the source of truth
+(`lib/user-role.ts`'s `USER_ROLES`, ordered highest to lowest privilege - that array order *is*
+the hierarchy), established while scoping the dashboard exploration (see
+`app/projects/dashboard/option-1`, `option-2`). **The type stays the full six - don't shrink it.**
+Separately, **active build focus is narrower: just `registered-user` and `public-user` right
+now.** Those are two different things - the role model is complete and correct as documented
+below; which roles get *built for* today is a scoping call layered on top of it, not a property of
+the type. Don't build features for the other four roles ahead of being told to, but don't remove
+them from `USER_ROLES` either.
+
+**The hierarchy, highest to lowest:**
+`biodata-admin` > `biodata-user` > `privileged-admin` > `privileged-user` > `registered-user` >
+`public-user`.
+
+**Key insight: `biodata-admin`/`biodata-user` are themselves an organisation - DEW.** DEW isn't a
+neutral platform operator sitting outside the org model, it's the org at the top of it. That's why
+org-affiliated chrome (the breadcrumb's org switcher) applies to the `biodata-*` roles too, not
+just the `privileged-*` ones - see the role-access matrix below.
+
+- **`public-user`.** Not signed in. Sees the public, org-wide view - the existing SA Flora and
+  Fauna Data Dashboard (Overview/Flora/Fauna/Projects/More information tabs) is this tier's
+  experience today. In active build focus - access should be gated down from `registered-user`
+  (the more restricted of the two in-focus roles) - specifics not given yet, don't invent them.
+- **`registered-user`.** Signed in, an individual account not affiliated with any organisation.
+  Can contribute data, nominate sensitive species, track their own submissions/licensing. This is
+  `DEFAULT_USER_ROLE` - `/projects/dashboard/option-1` and `option-2` render as this role by
+  default, and it's the other tier in active build focus. No organisation - no org switcher.
+- **`privileged-user`.** Signed in and affiliated with a partner organisation (a research body, a
+  consultancy, a partner like Birds SA - see the "Our partners and data contributors" list on the
+  BDBSA page). Gets everything a `registered-user` gets, plus the org switcher. Not in active
+  build focus.
+- **`privileged-admin`.** Admin of a partner organisation - manages that org's own users/settings
+  on top of what a `privileged-user` gets. Not in active build focus.
+- **`biodata-user`.** DEW staff. Affiliated with DEW itself (see the key insight above), so also
+  gets the org switcher. Not in active build focus.
+- **`biodata-admin`.** DEW super-user - the top of the hierarchy, admins the whole platform.
+  Always passes every feature-access check (see `hasFeatureAccess`'s bypass) - the "everything
+  visible" baseline every feature is built against before gating down for other roles. Not in
+  active build focus.
+
+**Switched via the `userRole` URL search param, not a fixed value.** e.g.
+`/projects/dashboard/option-1?userRole=privileged-user`. No real auth/session in this exploratory
+build, so the URL is the only source of truth for "who's looking at this" - see `lib/user-role.ts`
+(the role list + `isUserRole` guard + `DEFAULT_USER_ROLE`) and `lib/use-user-role.ts` (the
+`useUserRole()` hook, reads/validates the search param, falls back to `DEFAULT_USER_ROLE` =
+`"registered-user"` if missing or unrecognised). A page reading it must render the role-dependent
+part inside a `<Suspense>` boundary - `useSearchParams` opts a route out of static rendering
+otherwise (Next.js build error) - see the `DashboardPage`/`Dashboard` split in
+`app/projects/dashboard/option-1/page.tsx` for the pattern.
+
+### Role access matrix (`config/role-access.config.ts`)
+
+Per-feature visibility is decided in one place - `config/role-access.config.ts` - not by checking
+`useUserRole()` inline at each gated element. It's a deliberately separate file from
+`design-system.config.ts` (that one's "which doc-page variant shows"; this one's "which product
+feature does a given role see") and deliberately just data - a `FeatureKey -> UserRole[]` map the
+user owns and edits directly, not something to restructure without asking.
+
+- **Build every feature as if for `biodata-admin` first, gate down from there.** `biodata-admin`
+  always passes access checks (see the bypass in `hasFeatureAccess`) - it's the "everything
+  visible" baseline. A feature only needs a `roleAccessMatrix` entry once it's actually meant to
+  be restricted for some other role; an ungated feature is visible to everyone by default.
+- **`useFeatureAccess(feature)`** (`lib/use-feature-access.ts`) is the call site API - combines
+  `useUserRole()` with `hasFeatureAccess()`. Same `<Suspense>` requirement as `useUserRole` itself.
+- **Don't invent matrix entries ahead of being told.** The org pill (`orgSwitcher`) is the only
+  gated feature defined so far - what each role should and shouldn't see beyond that is still
+  being specified, and doubly so for whatever's decided for `public-user` vs `registered-user`
+  within current build focus.
+- **First (and so far only) entry: `orgSwitcher` (the breadcrumb's `[ORG ▾]` pill), gated to
+  `["privileged-user", "privileged-admin", "biodata-user"]` (`biodata-admin` gets it too, via the
+  bypass).** Every org-affiliated role, in other words - `registered-user` and `public-user` are
+  the only two with no organisation to switch between, which is also why it correctly stays hidden
+  for both roles in current build focus without needing any focus-specific logic - the matrix
+  already says so. It was in the original dashboard mockup unconditionally, but that mockup wasn't
+  role-accurate.
+- **`option-2` doesn't read the role or the matrix yet** - nothing on it is role-gated so far.
 
 ## Known gaps / loose ends (as of the Avatar build)
 
