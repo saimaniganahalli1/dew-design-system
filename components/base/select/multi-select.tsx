@@ -201,7 +201,7 @@ const MultiSelectRoot = ({
 
     return (
         <SelectContext.Provider value={{ size }}>
-            <div className={cx("flex flex-col gap-1.5", className)}>
+            <div className={cx("font-barlow flex flex-col gap-1.5", className)}>
                 {label && (
                     <Label isRequired={hideRequiredIndicator ? false : isRequired} isInvalid={isInvalid} tooltip={tooltip}>
                         {label}
@@ -253,7 +253,9 @@ const MultiSelectRoot = ({
                         style={{ width: popoverWidth || undefined }}
                         className={(state) =>
                             cx(
-                                "w-(--trigger-width) origin-(--trigger-anchor-point) overflow-hidden rounded-lg bg-primary shadow-lg ring-1 ring-secondary_alt outline-hidden will-change-transform",
+                                // font-barlow: this Popover portals to <body>, outside any font-scoping
+                                // wrapper around the trigger - see components/base/select/popover.tsx.
+                                "font-barlow w-(--trigger-width) origin-(--trigger-anchor-point) overflow-hidden rounded-lg bg-primary shadow-lg ring-1 ring-secondary_alt outline-hidden will-change-transform",
                                 state.isEntering &&
                                     "duration-150 ease-out animate-in fade-in placement-top:slide-in-from-bottom-0.5 placement-bottom:slide-in-from-top-0.5",
                                 state.isExiting &&

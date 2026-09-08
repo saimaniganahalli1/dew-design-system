@@ -34,7 +34,7 @@ export const rawNav: NavSection[] = [
       { title: "Button", href: "/components/button", description: "Primary action trigger - 8 colour variants, 5 sizes, icon and loading states." },
       { title: "Checkbox", href: "/components/checkbox", description: "Binary selection control with an indeterminate state and two sizes." },
       { title: "Input", href: "/components/input", description: "Text field plus specialised variants - password, date, number, payment, tags, file upload, PIN." },
-      { title: "Modal", href: "/components/modal", description: "Documentation coming soon." },
+      { title: "Modal", href: "/components/modal", description: "Overlay dialog built on React Aria - Confirmation, Destructive, and free-form Form variants, plus the base ModalOverlay/Modal/Dialog primitives." },
       { title: "Radio buttons", href: "/components/radio-buttons", description: "Single-choice selection within a group - optional hint text, horizontal/vertical orientation, two sizes." },
       { title: "Radio groups", href: "/components/radio-groups", description: "Card-style single-choice selection - icon, avatar, payment, radio, and checkbox layouts, two sizes." },
       { title: "Select", href: "/components/select", description: "Dropdown selection - single select, searchable combobox, multi-select, tag select, and native select, in three sizes." },
@@ -44,10 +44,17 @@ export const rawNav: NavSection[] = [
     ],
   },
   {
+    title: "Custom Components",
+    items: [
+      { title: "Date range", href: "/custom-components/date-range", description: "Prev-arrow / calendar / range-text / next-arrow control, styled like an Input - no real DEW equivalent (input-date.tsx is single-value only). Pending a stakeholder decision on promotion into Components." },
+    ],
+  },
+  {
     title: "Patterns",
     items: [
       { title: "Forms", href: "/patterns/forms", description: "Documentation coming soon." },
       { title: "Navigation", href: "/patterns/navigation", description: "Documentation coming soon." },
+      { title: "Tree selection", href: "/patterns/tree-view", description: "Multi-select file/folder tree composed from Tree view + the base Checkbox - cascading selection and indeterminate parents." },
       { title: "Empty states", href: "/patterns/empty-states", description: "Documentation coming soon." },
       { title: "Loading states", href: "/patterns/loading-states", description: "Documentation coming soon." },
       { title: "Feedback", href: "/patterns/feedback", description: "Documentation coming soon." },

@@ -164,7 +164,7 @@ export const TagSelectBase = ({
                     // This keeps the combobox popover open and the input value unchanged when an item is selected.
                     value={null}
                     onChange={onSelectionChange}
-                    className={(state) => cx("flex flex-col gap-1.5", typeof className === "function" ? className(state) : className)}
+                    className={(state) => cx("font-barlow flex flex-col gap-1.5", typeof className === "function" ? className(state) : className)}
                     {...props}
                 >
                     {(state) => (
