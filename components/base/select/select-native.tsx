@@ -35,7 +35,7 @@ export const NativeSelect = ({ label, hint, options, className, selectClassName,
     const hintId = `select-native-hint-${id}`;
 
     return (
-        <div className={cx("w-full in-data-input-wrapper:w-max", className)}>
+        <div className={cx("font-barlow w-full in-data-input-wrapper:w-max", className)}>
             {label && (
                 <Label htmlFor={selectId} id={selectId} className="mb-1.5">
                     {label}

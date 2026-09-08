@@ -117,6 +117,13 @@ interface AlertFullWidthProps {
      * The function to call when the confirm button is clicked.
      */
     onConfirm?: () => void;
+    /**
+     * Overrides the default centered `max-w-container` + `px-8` treatment (designed for
+     * standalone, full-viewport-width placements). Pass this when the alert sits inside a
+     * layout that already establishes its own horizontal padding rhythm, so the alert's
+     * content aligns with the content around it instead of centering independently.
+     */
+    className?: string;
 }
 
 export const AlertFullWidth = ({
@@ -128,10 +135,11 @@ export const AlertFullWidth = ({
     color = "default",
     actionType = "button",
     dismissLabel = "Dismiss",
+    className,
 }: AlertFullWidthProps) => {
     return (
         <div className="font-barlow relative border-t border-primary bg-secondary md:border-t-0 md:border-b">
-            <div className="mx-auto flex max-w-container flex-col gap-4 p-4 md:flex-row md:items-center md:gap-3 md:px-8 md:py-3">
+            <div className={cx("mx-auto flex max-w-container flex-col gap-4 p-4 md:flex-row md:items-center md:gap-3 md:px-8 md:py-3", className)}>
                 <div className="flex flex-1 flex-col gap-4 md:w-0 md:flex-row md:items-center">
                     <FeaturedIcon
                         className="hidden md:flex"

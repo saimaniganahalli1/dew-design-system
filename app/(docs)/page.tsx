@@ -71,7 +71,7 @@ export default function OverviewPage() {
       <hr style={{ borderColor: "var(--color-gray-200)" }} className="mb-12" />
 
       {/* Section cards */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {nav.map((section) => (
           <div
             key={section.title}

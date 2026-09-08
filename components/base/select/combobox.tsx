@@ -138,7 +138,7 @@ export const ComboBox = ({
         <SelectContext.Provider value={{ size }}>
             <AriaComboBox menuTrigger="focus" {...otherProps}>
                 {(state) => (
-                    <div className="flex flex-col gap-1.5">
+                    <div className="font-barlow flex flex-col gap-1.5">
                         {otherProps.label && (
                             <Label isRequired={hideRequiredIndicator ? false : state.isRequired} tooltip={otherProps.tooltip}>
                                 {otherProps.label}
