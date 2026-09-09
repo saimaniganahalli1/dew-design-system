@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Button as AriaButton, Dialog, DialogTrigger } from "react-aria-components";
-import { Bell01, ChevronDown, Upload01, Plus, TrendUp02, ArrowNarrowRight } from "@untitledui/icons";
+import { Button as AriaButton, Dialog, DialogTrigger, Focusable } from "react-aria-components";
+import { Bell01, ChevronDown, Upload01, Plus, TrendUp02, ArrowNarrowRight, Folder, FileLock01, Flag01 } from "@untitledui/icons";
+import type { FC } from "react";
 import { Button } from "@/components/base/buttons/button";
 import { Avatar } from "@/components/base/avatar/avatar";
+import { Tooltip } from "@/components/base/tooltip/tooltip";
 import { Popover } from "@/components/base/select/popover";
 import { Badge } from "@/components/base/badges/badges";
 import type { BadgeColor } from "@/components/base/badges/badges";
@@ -24,7 +26,7 @@ import { cx } from "@/utils/cx";
 //
 // Figma source: https://www.figma.com/design/bgksKvmSaVR7ZptB98LzGr/-HI-FI--Dashboard-Explorations?node-id=53-568
 // "SCREEN" - per CONTEXT.md's "Exploratory page layouts (/pages/<page-name>,
-// /projects/<page-name>/<variant>)" section. The Figma frame only specifies the header, primary
+// /pages/<page-name>/<variant>)" section. The Figma frame only specifies the header, primary
 // nav, and greeting/KPI banner (nothing below y=473 is drawn) - the body below the banner was
 // data-heavy metric cards ported from option-1 until the dashboard's actual goals got scoped (see
 // CONTEXT.md's "Registered User dashboard scope"); now it's the task list instead.
@@ -45,7 +47,7 @@ const CURRENT_KEY = "dashboard";
 function NavDropdownItem({ node, depth = 0 }: { node: NavNode; depth?: number }) {
   const [open, setOpen] = useState(false);
   const hasChildren = !!node.items?.length;
-  const href = node.key ? `/projects/${node.key}/option-2` : undefined;
+  const href = node.key ? `/pages/${node.key}/option-2` : undefined;
   const isCurrent = !!node.key && node.key === CURRENT_KEY;
   const indent = { paddingLeft: 12 + depth * 12 };
 
@@ -94,7 +96,7 @@ function NavDropdownItem({ node, depth = 0 }: { node: NavNode; depth?: number })
 function NavTopItem({ node, active = false }: { node: NavNode; active?: boolean }) {
   const [open, setOpen] = useState(false);
   const hasChildren = !!node.items?.length;
-  const href = node.key ? `/projects/${node.key}/option-2` : undefined;
+  const href = node.key ? `/pages/${node.key}/option-2` : undefined;
   const labelClassName = cx("relative flex items-center gap-1 px-4 text-sm", active ? "font-medium text-brand-700" : "text-primary");
 
   if (!hasChildren) {
@@ -224,6 +226,38 @@ function TaskItem({
   );
 }
 
+// A quick-actions button pointing at a real, already-built destination.
+function QuickAction({ icon, label, href }: { icon: FC<{ className?: string }>; label: string; href: string }) {
+  return (
+    <Button color="secondary" iconLeading={icon} href={href}>
+      {label}
+    </Button>
+  );
+}
+
+// A quick-actions button for an operation that's scoped (it's a real item in
+// lib/registered-user-nav.ts) but doesn't have a page yet - disabled with a tooltip explaining why,
+// rather than either a dead link or leaving it out of the row entirely. `isDisabled` on our Button
+// renders `aria-disabled`, not the native `disabled` attribute (see react-aria's useButton), so
+// hover still fires on the button itself - but its own internal `useHover` is intentionally
+// suppressed while disabled (so it doesn't show a hover/press visual state), which also blocks the
+// tooltip from wiring up if it were placed directly on the button. Wrapping in `Focusable` (from
+// react-aria-components) gives the tooltip its own independent hover/focus target on the wrapping
+// span instead, verified working via Playwright before landing this pattern.
+function DisabledQuickAction({ icon, label, note }: { icon: FC<{ className?: string }>; label: string; note: string }) {
+  return (
+    <Tooltip title={note}>
+      <Focusable>
+        <span className="inline-flex">
+          <Button color="secondary" iconLeading={icon} isDisabled>
+            {label}
+          </Button>
+        </span>
+      </Focusable>
+    </Tooltip>
+  );
+}
+
 // Same array as dashboard/option-1 - one source driving both the rendered list and its count
 // badge, so the heading can't drift out of sync with what's shown.
 const dashboardTasks: {
@@ -262,7 +296,7 @@ export default function DashboardOption2Page() {
         <div className="flex items-center gap-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/projects/dashboard/gov-sa-dew-lockup.png"
+            src="/pages/dashboard/gov-sa-dew-lockup.png"
             alt="Government of South Australia, Department for Environment and Water"
             className="h-[31px] w-auto"
           />
@@ -309,10 +343,27 @@ export default function DashboardOption2Page() {
         </div>
       </div>
 
+      {/* ── Quick actions: real, intentional entry points a registered user actually takes from
+          here - not the old generic "Quick action 3"/"Quick action 4" placeholders this replaces
+          (see git history on this file). "Manage projects & datasets" links to the real
+          project-list page; "Request new DLA" and "Nominate a species" are real items in
+          lib/registered-user-nav.ts that don't have a page yet, so they're disabled with a tooltip
+          rather than a dead link - same "honest, not a placeholder link" rule as TaskItem below,
+          applied to a disabled control instead of an omitted one. "Add project"/"Upload dataset"
+          already cover project/dataset creation up in the banner, so they're not repeated here. ── */}
+      <div className="flex flex-col gap-3 bg-secondary px-9 pt-8">
+        <p className="text-lg font-medium text-primary">Quick actions</p>
+        <div className="flex flex-wrap items-center gap-3">
+          <QuickAction icon={Folder} label="Manage projects & datasets" href="/pages/project-list/option-2" />
+          <DisabledQuickAction icon={FileLock01} label="Request new DLA" note="Coming soon - the DLA request flow isn't built yet" />
+          <DisabledQuickAction icon={Flag01} label="Nominate a species" note="Coming soon - the nomination flow isn't built yet" />
+        </div>
+      </div>
+
       {/* ── Needs your attention: the dashboard's primary content (nav chrome - not pixel-matched).
           flex-1 fills remaining space so the footer sticks to the bottom of the viewport when
           content is short, instead of floating mid-page with dead space below it ── */}
-      <div className="flex flex-1 flex-col gap-4 bg-secondary px-9 pb-8">
+      <div className="flex flex-1 flex-col gap-4 bg-secondary px-9 pt-6 pb-8">
         <div className="flex items-center gap-2">
           <p className="text-lg font-medium text-primary">Needs your attention</p>
           <Badge size="sm" color="gray">{dashboardTasks.length}</Badge>

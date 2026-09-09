@@ -31,7 +31,7 @@ matter how complete it otherwise looks.
   buttons/button.tsx`) takes an `iconTrailing` prop on every color variant, including `link-color` -
   a "go to X" affordance uses `<Button color="link-color" iconTrailing={ArrowNarrowRight}>Go to
   X</Button>`, a real icon, never a character appended to the label text. Caught after the fact:
-  every such button across `/projects/*` originally read `{label} →` as plain text - fixed to use
+  every such button across `/pages/*` originally read `{label} →` as plain text - fixed to use
   the icon prop instead, per the user directly.
 - **Geist stays Geist, Barlow stays Barlow** - Scaffold text never borrows `font-barlow` to match
   a DEW neighbour, and vice versa, except inside a generated screen where everything is Barlow.
@@ -314,7 +314,7 @@ tooling, it's a reconstruction of an actual product screen. Two rules specific t
   are added/removed - so toggling the inspector off never shifts layout. Any new `/test-*` page
   must be built with this from the start, not bolted on after.
 
-## Exploratory page layouts (`/pages/<page-name>`, `/projects/<page-name>/<variant>`)
+## Exploratory page layouts (`/pages/<page-name>`, `/pages/<page-name>/<variant>`)
 
 A `/pages/<page-name>` route is a different thing again from both a doc page and a `/test-*`
 generated screen. `/test-*` exists to prove one specific, already-decided Figma frame maps 1:1
@@ -323,11 +323,12 @@ situation: exploring what a real product screen (a dashboard, a shell) could loo
 surrounding information architecture - navigation, sidebar contents, breadcrumbs - is still being
 decided. Same rigor, different scope of what's "locked."
 
-`/projects/<page-name>/<variant>` (e.g. `/projects/dashboard/option-1`, `/projects/dashboard/option-2`)
+`/pages/<page-name>/<variant>` (e.g. `/pages/dashboard/option-1`, `/pages/dashboard/option-2`)
 is the same kind of thing, one level further out: multiple competing layout explorations of the
 *same* screen, sitting side by side while the screen's own purpose/IA is still being decided, not
-just its chrome. Every rule below applies equally to both - the only difference is `/pages/*` is
-one committed direction, `/projects/<page-name>/*` is several not-yet-chosen ones.
+just its chrome. Every rule below applies equally to both - the only difference is a bare
+`/pages/<page-name>` is one committed direction, `/pages/<page-name>/<variant>` is several
+not-yet-chosen ones.
 
 - **Every contained widget still has to be real DEW, or honestly `?`-flagged - no exceptions
   carried over from `/test-*`.** A search field, a button, an avatar, a date picker: if it's an
@@ -335,7 +336,7 @@ one committed direction, `/projects/<page-name>/*` is several not-yet-chosen one
   rule as a `/test-*` screen (see "Generated screens" above) - real `components/base/**`/
   `components/application/**`/`components/foundations/**` component with its exact API, or a
   visible `?` gap marker inline in the screen (see `GapDateRange` in
-  `/projects/dashboard/option-1`), never a lookalike.
+  `/pages/dashboard/option-1`), never a lookalike.
 - **Navigation/IA chrome is explicitly exempt from that fidelity, because it isn't decided yet.**
   A primary icon rail, a contextual sidebar's nav list, a breadcrumb - anything whose job is "get
   the user somewhere else in the product" - gets built as a simplified structural placeholder from
@@ -350,8 +351,8 @@ one committed direction, `/projects/<page-name>/*` is several not-yet-chosen one
   Figma frame maps 1:1 onto the shipped component library - it belongs to `/test-*` only. `/pages/*`
   is reserved strictly for building product page layouts: it should look and feel like the real
   screen it's previewing, not a doc/review surface. Follow
-  `app/projects/dashboard/option-1/page.tsx` as the template for a new `/pages/<page-name>` or
-  `/projects/<page-name>/<variant>` screen, not `app/test-site-details/page.tsx`.
+  `app/pages/dashboard/option-1/page.tsx` as the template for a new `/pages/<page-name>` or
+  `/pages/<page-name>/<variant>` screen, not `app/test-site-details/page.tsx`.
 - **A Figma frame's own internal annotations (a sticky note, a designer's comment layer) are not
   product UI and don't get reproduced.** If a layer is clearly a note-to-self about the design
   rather than something meant to render in the product (check for a comment-style visual
@@ -362,16 +363,16 @@ one committed direction, `/projects/<page-name>/*` is several not-yet-chosen one
 - **Not added to `lib/nav.ts`.** Same precedent as `/test-*` - these are working screens, not
   documented product surfaces, reached by direct URL.
 - **Renders full-screen, with none of the doc site's own chrome.** A `/pages/<page-name>` or
-  `/projects/<page-name>/<variant>` screen is a preview of what a real product UI shell would look
+  `/pages/<page-name>/<variant>` screen is a preview of what a real product UI shell would look
   like, not a documentation page, so the doc site's Sidebar and its `ml-56 max-w-5xl` content
   column must not wrap it. This is enforced structurally, not by convention: every documented,
   chrome-having route (home, `/primitives/**`, `/components/**`, `/patterns/**`, `/config`,
   `/test-*`, `/llms.txt`) lives inside the `app/(docs)/` route group, whose `app/(docs)/layout.tsx`
-  renders `Sidebar` plus the constrained `main`. `app/pages/**` and `app/projects/**` sit outside
+  renders `Sidebar` plus the constrained `main`. `app/pages/**` sits outside
   that group entirely, so the root `app/layout.tsx` (fonts, `ConfigProvider`, `Toaster`, dev-only
   `Agentation` - genuinely global concerns only) is the only layout wrapping them. A new screen
   should own its own full-height root (`min-h-screen`) exactly like
-  `app/projects/dashboard/option-1/page.tsx` does - it needs to look like a real screen, not a doc
+  `app/pages/dashboard/option-1/page.tsx` does - it needs to look like a real screen, not a doc
   page with the sidebar subtracted.
 
 ## Custom components (`components/custom/**`)
@@ -395,17 +396,17 @@ stakeholder-decided home yet.
 - **Promotion is a move, not a rebuild.** Once a stakeholder picks a direction, the file moves from
   `components/custom/<name>/` to `components/base/` or `components/application/`, its doc page
   moves from "Custom Components" to "Components" (plus a real `design-system.config.ts` entry if it
-  needs variants), and every `/pages/*`/`/projects/*` screen using it is repointed at the new
+  needs variants), and every `/pages/*` screen using it is repointed at the new
   import path. If the direction changes instead, the custom component gets replaced, same as any
   other gap would.
 - **First instance: `components/custom/date-range/date-range-control.tsx`.** Replaced the
-  `GapDateRange` `?`-marker in `app/projects/dashboard/option-1/page.tsx` - a real prev-arrow /
+  `GapDateRange` `?`-marker in `app/pages/dashboard/option-1/page.tsx` - a real prev-arrow /
   calendar / range-text / next-arrow control (react-aria `RangeCalendar` + `DialogTrigger`, the
   real DEW `Popover` for the overlay shell), documented at `/custom-components/date-range`.
 
 ## BDBSA domain research
 
-The `/projects/*` explorations aren't built from invented content where the real thing is publicly
+The `/pages/<page-name>/<variant>` explorations aren't built from invented content where the real thing is publicly
 documented - the Biological Databases of South Australia (BDBSA) is a real DEW program with its own
 published fact sheets, and every screen modelling it should stay consistent with what those actually
 say. Captured here so the next screen/decision starts from the same grounding instead of re-deriving
@@ -420,7 +421,7 @@ or drifting from it. Sources:
 - **Data hierarchy: Project → Site → Observation → Occurrence.** Projects are the mandatory
   top-level container - **"all data entered into the BDBSA must be assigned to a project
   number."** This directly confirms the "Project as container" reframing from the other designer's
-  Projects Figma (see `app/projects/project-detail/option-1`'s comment) and the nested-records tree
+  Projects Figma (see `app/pages/project-detail/option-1`'s comment) and the nested-records tree
   already built there (Site/Observation/Occurrence/Visit/Transect/Quadrat/Block/Ramble/Trap/Custom
   Event) - not an invented shape.
 - **"If data does not belong with an existing BDBSA project, you can register a new project"** -
@@ -458,7 +459,7 @@ page vs. reporting surface" framing this confirms). A registered user needs to s
   a one-off.
 
 Not yet built - this is scope, not an implementation. The existing dashboard body
-(`app/projects/dashboard/option-1`, `option-2`) still has the placeholder KPI/metric-card/map
+(`app/pages/dashboard/option-1`, `option-2`) still has the placeholder KPI/metric-card/map
 content from before this was scoped; it should eventually be replaced with real widgets for the
 four items above rather than generic biodiversity stats, once that redesign is actually done.
 
@@ -467,7 +468,7 @@ four items above rather than generic biodiversity stats, once that redesign is a
 The BioData SA portal has six tiers - the slugs below are the source of truth
 (`lib/user-role.ts`'s `USER_ROLES`, ordered highest to lowest privilege - that array order *is*
 the hierarchy), established while scoping the dashboard exploration (see
-`app/projects/dashboard/option-1`, `option-2`). **The type stays the full six - don't shrink it.**
+`app/pages/dashboard/option-1`, `option-2`). **The type stays the full six - don't shrink it.**
 Separately, **active build focus is narrower: just `registered-user` and `public-user` right
 now.** Those are two different things - the role model is complete and correct as documented
 below; which roles get *built for* today is a scoping call layered on top of it, not a property of
@@ -489,7 +490,7 @@ just the `privileged-*` ones - see the role-access matrix below.
   (the more restricted of the two in-focus roles) - specifics not given yet, don't invent them.
 - **`registered-user`.** Signed in, an individual account not affiliated with any organisation.
   Can contribute data, nominate sensitive species, track their own submissions/licensing. This is
-  `DEFAULT_USER_ROLE` - `/projects/dashboard/option-1` and `option-2` render as this role by
+  `DEFAULT_USER_ROLE` - `/pages/dashboard/option-1` and `option-2` render as this role by
   default, and it's the other tier in active build focus. No organisation - no org switcher.
 - **`privileged-user`.** Signed in and affiliated with a partner organisation (a research body, a
   consultancy, a partner like Birds SA - see the "Our partners and data contributors" list on the
@@ -505,14 +506,14 @@ just the `privileged-*` ones - see the role-access matrix below.
   active build focus.
 
 **Switched via the `userRole` URL search param, not a fixed value.** e.g.
-`/projects/dashboard/option-1?userRole=privileged-user`. No real auth/session in this exploratory
+`/pages/dashboard/option-1?userRole=privileged-user`. No real auth/session in this exploratory
 build, so the URL is the only source of truth for "who's looking at this" - see `lib/user-role.ts`
 (the role list + `isUserRole` guard + `DEFAULT_USER_ROLE`) and `lib/use-user-role.ts` (the
 `useUserRole()` hook, reads/validates the search param, falls back to `DEFAULT_USER_ROLE` =
 `"registered-user"` if missing or unrecognised). A page reading it must render the role-dependent
 part inside a `<Suspense>` boundary - `useSearchParams` opts a route out of static rendering
 otherwise (Next.js build error) - see the `DashboardPage`/`Dashboard` split in
-`app/projects/dashboard/option-1/page.tsx` for the pattern.
+`app/pages/dashboard/option-1/page.tsx` for the pattern.
 
 ### Role access matrix (`config/role-access.config.ts`)
 

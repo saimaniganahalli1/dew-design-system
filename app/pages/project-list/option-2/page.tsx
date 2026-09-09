@@ -13,8 +13,8 @@ import { registeredUserNav, registeredUserAccountMenu, registeredUserFooterLinks
 import { cx } from "@/utils/cx";
 
 // Option 2 of 2: the projects list on the top-nav shell (header + primary nav bar), reusing
-// app/projects/dashboard/option-2's header/nav chrome verbatim - see that file's comment for the
-// full rationale. See app/projects/project-list/option-1 for the same screen on the sidebar shell.
+// app/pages/dashboard/option-2's header/nav chrome verbatim - see that file's comment for the
+// full rationale. See app/pages/project-list/option-1 for the same screen on the sidebar shell.
 //
 // No Figma frame yet for a Projects list screen, so - same as option-1 and the dashboard body's
 // metric/filter/map panels - this is built structurally: every contained widget (button, avatar,
@@ -30,7 +30,7 @@ const CURRENT_KEY = "project-list";
 function NavDropdownItem({ node, depth = 0 }: { node: NavNode; depth?: number }) {
   const [open, setOpen] = useState(false);
   const hasChildren = !!node.items?.length;
-  const href = node.key ? `/projects/${node.key}/option-2` : undefined;
+  const href = node.key ? `/pages/${node.key}/option-2` : undefined;
   const isCurrent = !!node.key && node.key === CURRENT_KEY;
   const indent = { paddingLeft: 12 + depth * 12 };
 
@@ -79,7 +79,7 @@ function NavDropdownItem({ node, depth = 0 }: { node: NavNode; depth?: number })
 function NavTopItem({ node, active = false }: { node: NavNode; active?: boolean }) {
   const [open, setOpen] = useState(false);
   const hasChildren = !!node.items?.length;
-  const href = node.key ? `/projects/${node.key}/option-2` : undefined;
+  const href = node.key ? `/pages/${node.key}/option-2` : undefined;
   const labelClassName = cx("relative flex items-center gap-1 px-4 text-sm", active ? "font-medium text-brand-700" : "text-primary");
 
   if (!hasChildren) {
@@ -188,7 +188,7 @@ export default function ProjectListOption2Page() {
         <div className="flex items-center gap-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/projects/dashboard/gov-sa-dew-lockup.png"
+            src="/pages/dashboard/gov-sa-dew-lockup.png"
             alt="Government of South Australia, Department for Environment and Water"
             className="h-[31px] w-auto"
           />
@@ -225,8 +225,9 @@ export default function ProjectListOption2Page() {
         </div>
       </div>
 
-      {/* ── Project rows ── */}
-      <div className="flex flex-col gap-4 bg-secondary px-9 pt-6 pb-8">
+      {/* ── Project rows: flex-1 fills remaining space so the footer sticks to the bottom of the
+          viewport when content is short, same fix as dashboard/option-2 ── */}
+      <div className="flex flex-1 flex-col gap-4 bg-secondary px-9 pt-6 pb-8">
         <ProjectRow
           name="Adelaide Hills Bushland Survey"
           org="Adelaide Hills Landcare"

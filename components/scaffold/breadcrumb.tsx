@@ -20,7 +20,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { ChevronSelectorVertical } from "@untitledui/icons";
 
-const HOME_HREF = "/projects/dashboard/option-1";
+const HOME_HREF = "/pages/dashboard/option-1";
 
 export function Breadcrumb({
   section,

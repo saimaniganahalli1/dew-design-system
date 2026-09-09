@@ -26,7 +26,7 @@ export const Popover = (props: PopoverProps) => {
             className={(state) =>
                 cx(
                     // font-barlow: AriaPopover portals to a container appended straight to <body>,
-                    // outside whatever font-scoping wrapper (e.g. a /projects/* page's
+                    // outside whatever font-scoping wrapper (e.g. a /pages/* page's
                     // `font-barlow` root div) rendered the trigger - so unlike a normal child, it
                     // can't inherit the font and falls back to the site default (Geist) instead.
                     // Same fix as every other real DEW component (button.tsx, badges.tsx,

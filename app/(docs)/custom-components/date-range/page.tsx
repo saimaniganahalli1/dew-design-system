@@ -120,7 +120,7 @@ export default function CustomDateRangePage() {
       {/* ── Where it's used ── */}
       <h2 className="text-balance">Where it&apos;s used</h2>
       <p className="text-balance">
-        <code>app/projects/dashboard/option-1/page.tsx</code> - the registered-user dashboard exploration.
+        <code>app/pages/dashboard/option-1/page.tsx</code> - the registered-user dashboard exploration.
         Previously a <code>?</code>-blocked gap marker there; replaced with this once its shape was clear
         enough to build for real.
       </p>

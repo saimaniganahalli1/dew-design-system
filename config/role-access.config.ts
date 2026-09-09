@@ -2,7 +2,7 @@
  * Role access matrix - which UserRole(s) can see a given feature.
  *
  * This is the single source of truth for per-feature visibility across
- * /projects/dashboard/**. It's deliberately separate from
+ * /pages/dashboard/**. It's deliberately separate from
  * design-system.config.ts (that one's about which component/variant a doc
  * page shows; this one's about which *product feature* a given user role
  * sees) and deliberately just data - add/remove a role from a feature's

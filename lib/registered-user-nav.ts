@@ -1,11 +1,11 @@
 // Registered User's real, decided IA - captured by the team ahead of the Sept 15 layout
 // decision (see the "Registered User" nav tree brief). This is the one place the tree lives;
-// app/projects/dashboard/option-{1,2} and app/projects/project-list/option-{1,2} each render it
+// app/pages/dashboard/option-{1,2} and app/pages/project-list/option-{1,2} each render it
 // in their own shell's idiom (sidebar accordion vs. top-nav dropdown), but read from here so the
 // four screens can't drift out of sync as the IA changes.
 //
 // `key` is set only on the two items with a real page today - each screen turns it into a
-// same-variant href (`/projects/<key>/option-1` or `/projects/<key>/option-2`). Every other item
+// same-variant href (`/pages/<key>/option-1` or `/pages/<key>/option-2`). Every other item
 // has no page yet, so it renders as inert text, same "honest, not a placeholder link" convention
 // used elsewhere for undecided content.
 

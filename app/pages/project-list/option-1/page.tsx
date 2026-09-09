@@ -10,16 +10,16 @@ import { Avatar } from "@/components/base/avatar/avatar";
 import { Tooltip, TooltipTrigger } from "@/components/base/tooltip/tooltip";
 import { Popover } from "@/components/base/select/popover";
 import { Breadcrumb } from "@/components/scaffold/breadcrumb";
-import { HomeTabPanels } from "@/app/projects/_shared/home-tab-panels";
-import { ProjectListContent } from "@/app/projects/_shared/project-list-content";
-import { GlobalProjectSearch } from "@/app/projects/_shared/global-search";
+import { HomeTabPanels } from "@/app/pages/_shared/home-tab-panels";
+import { ProjectListContent } from "@/app/pages/_shared/project-list-content";
+import { GlobalProjectSearch } from "@/app/pages/_shared/global-search";
 import { useFeatureAccess } from "@/lib/use-feature-access";
 import { registeredUserNav, registeredUserAccountMenu, registeredUserFooterLinks, type NavNode } from "@/lib/registered-user-nav";
 import { cx } from "@/utils/cx";
 
 // Option 1 of 2: the projects list on the sidebar-nav shell (primary icon rail + contextual
-// sidebar), reusing app/projects/dashboard/option-1's three-column header/rail/sidebar chrome
-// verbatim - see that file's comment for the full rationale. See app/projects/project-list/option-2
+// sidebar), reusing app/pages/dashboard/option-1's three-column header/rail/sidebar chrome
+// verbatim - see that file's comment for the full rationale. See app/pages/project-list/option-2
 // for the same screen on the top-nav shell.
 //
 // No Figma frame yet for a Projects list screen, so - same as the dashboard body's metric/filter/
@@ -50,7 +50,7 @@ const CURRENT_KEY = "project-list";
 function NavTree({ node, depth = 0, defaultOpen = false }: { node: NavNode; depth?: number; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
   const hasChildren = !!node.items?.length;
-  const href = node.key ? `/projects/${node.key}/option-1` : undefined;
+  const href = node.key ? `/pages/${node.key}/option-1` : undefined;
   const isCurrent = !!node.key && node.key === CURRENT_KEY;
   const indent = { paddingLeft: 8 + depth * 12, paddingRight: 8 };
 
@@ -144,7 +144,7 @@ function SectionPlaceholder({ node }: { node: NavNode }) {
           : "This section's content hasn't been scoped yet - only its place in the navigation is decided so far."}
       </p>
       {relatedLink && (
-        <Button color="link-color" size="sm" href={`/projects/${relatedLink.key}/option-1`} iconTrailing={ArrowNarrowRight}>
+        <Button color="link-color" size="sm" href={`/pages/${relatedLink.key}/option-1`} iconTrailing={ArrowNarrowRight}>
           Go to {relatedLink.label}
         </Button>
       )}
@@ -193,86 +193,111 @@ function ProjectList() {
         </div>
       </header>
 
-      {/* Home's two views (My Dashboard / Data Overview) as a real vertical Tabs - see
-          dashboard/option-1's comment for the full rationale (TabList in column 2, TabPanel in
-          column 3, one Tabs ancestor wiring them together). Inert for every other section. */}
-      <Tabs orientation="vertical" defaultSelectedKey="dashboard" className="flex flex-1">
-        {/* ── Primary icon rail: top-level IA (nav chrome - not pixel-matched) ── */}
-        <aside className="hidden w-20 shrink-0 flex-col items-center gap-1 border-r border-secondary bg-secondary py-4 lg:flex">
-          {registeredUserNav.map((section) => {
-            const Icon = sectionIcons[section.label];
-            const active = section.label === activeSection;
-            return (
-              <Tooltip key={section.label} title={section.label} placement="right">
-                <TooltipTrigger
-                  onPress={() => setActiveSection(section.label)}
-                  className={cx(
-                    "flex size-12 items-center justify-center rounded-lg transition duration-100 ease-linear",
-                    active ? "bg-brand-solid text-white" : "text-quaternary hover:bg-tertiary hover:text-primary",
-                  )}
-                >
-                  {Icon && <Icon className="size-5" />}
-                </TooltipTrigger>
-              </Tooltip>
-            );
-          })}
-        </aside>
+      {/* ── Primary icon rail: top-level IA (nav chrome - not pixel-matched) ── */}
+      {(() => {
+        const iconRail = (
+          <aside className="hidden w-20 shrink-0 flex-col items-center gap-1 border-r border-secondary bg-secondary py-4 lg:flex">
+            {registeredUserNav.map((section) => {
+              const Icon = sectionIcons[section.label];
+              const active = section.label === activeSection;
+              return (
+                <Tooltip key={section.label} title={section.label} placement="right">
+                  <TooltipTrigger
+                    onPress={() => setActiveSection(section.label)}
+                    className={cx(
+                      "flex size-12 items-center justify-center rounded-lg transition duration-100 ease-linear",
+                      active ? "bg-brand-solid text-white" : "text-quaternary hover:bg-tertiary hover:text-primary",
+                    )}
+                  >
+                    {Icon && <Icon className="size-5" />}
+                  </TooltipTrigger>
+                </Tooltip>
+              );
+            })}
+          </aside>
+        );
 
-        {/* ── Contextual sidebar: selected section's children, or Home's My Dashboard/Data
-            Overview tab list (nav chrome - not pixel-matched) ── */}
-        <aside className="hidden w-[286px] shrink-0 flex-col justify-between overflow-y-auto border-r border-secondary bg-secondary p-4 lg:flex">
-          <div className="flex flex-col gap-1">
-            <p className="mb-3 text-xs font-semibold tracking-wide text-quaternary uppercase">{activeSectionNode.label}</p>
-            {activeSection === "Home" ? (
-              <TabList aria-label="Home views" className="flex flex-col gap-0.5">
-                <Tab
-                  id="dashboard"
-                  className={({ isSelected }) =>
-                    cx(
-                      "cursor-pointer rounded-md px-2 py-1 text-sm outline-hidden",
-                      isSelected ? "bg-primary font-medium text-primary shadow-xs ring-1 ring-secondary" : "text-primary hover:text-brand-700",
-                    )
-                  }
-                >
-                  My Dashboard
-                </Tab>
-                <Tab
-                  id="overview"
-                  className={({ isSelected }) =>
-                    cx(
-                      "cursor-pointer rounded-md px-2 py-1 text-sm outline-hidden",
-                      isSelected ? "bg-primary font-medium text-primary shadow-xs ring-1 ring-secondary" : "text-primary hover:text-brand-700",
-                    )
-                  }
-                >
-                  Data Overview
-                </Tab>
-              </TabList>
-            ) : (
-              activeSectionNode.items?.map((item) => <NavTree key={item.label} node={item} depth={1} />)
-            )}
-          </div>
-          <div className="flex flex-col gap-1.5 border-t border-secondary pt-4 text-[10px] font-semibold tracking-wide text-quaternary uppercase">
-            {registeredUserFooterLinks.map((link) => (
-              <p key={link}>{link}</p>
-            ))}
-          </div>
-        </aside>
+        // Home's two views (My Dashboard / Data Overview) get their own Tabs boundary, mounted
+        // only while Home is active - not one Tabs wrapping the whole page permanently. React-aria's
+        // Tabs keeps a single internal collection for its whole lifetime; a Tabs that always exists
+        // while its TabList only mounts once you switch to Home crashes the first time TabList
+        // mounts ("Cannot destructure property 'onAction' ... as it is undefined") - caught on
+        // project-detail/option-1, fixed the same way here since this file has the identical shape.
+        if (activeSection === "Home") {
+          return (
+            <Tabs orientation="vertical" defaultSelectedKey="dashboard" className="flex flex-1">
+              {iconRail}
 
-        {/* ── Main content: Projects has this screen's own content, Home's tab panels render the
-            shared real dashboard content (see app/projects/_shared/home-dashboard.tsx and
-            data-overview.tsx) - every other section is an honest placeholder (see
-            SectionPlaceholder above) until it's actually scoped ── */}
-        <main className="flex flex-1 flex-col">
-          {activeSection === "Home" ? (
-            <HomeTabPanels />
-          ) : activeSection === "Projects" ? (
-            <ProjectListContent />
-          ) : (
-            <SectionPlaceholder node={activeSectionNode} />
-          )}
-        </main>
-      </Tabs>
+              {/* ── Contextual sidebar: Home's My Dashboard/Data Overview tab list (nav chrome - not pixel-matched) ── */}
+              <aside className="hidden w-[286px] shrink-0 flex-col justify-between overflow-y-auto border-r border-secondary bg-secondary p-4 lg:flex">
+                <div className="flex flex-col gap-1">
+                  <p className="mb-3 text-xs font-semibold tracking-wide text-quaternary uppercase">{activeSectionNode.label}</p>
+                  <TabList aria-label="Home views" className="flex flex-col gap-0.5">
+                    <Tab
+                      id="dashboard"
+                      className={({ isSelected }) =>
+                        cx(
+                          "cursor-pointer rounded-md px-2 py-1 text-sm outline-hidden",
+                          isSelected ? "bg-primary font-medium text-primary shadow-xs ring-1 ring-secondary" : "text-primary hover:text-brand-700",
+                        )
+                      }
+                    >
+                      My Dashboard
+                    </Tab>
+                    <Tab
+                      id="overview"
+                      className={({ isSelected }) =>
+                        cx(
+                          "cursor-pointer rounded-md px-2 py-1 text-sm outline-hidden",
+                          isSelected ? "bg-primary font-medium text-primary shadow-xs ring-1 ring-secondary" : "text-primary hover:text-brand-700",
+                        )
+                      }
+                    >
+                      Data Dashboard
+                    </Tab>
+                  </TabList>
+                </div>
+                <div className="flex flex-col gap-1.5 border-t border-secondary pt-4 text-[10px] font-semibold tracking-wide text-quaternary uppercase">
+                  {registeredUserFooterLinks.map((link) => (
+                    <p key={link}>{link}</p>
+                  ))}
+                </div>
+              </aside>
+
+              {/* ── Main content: Home's tab panels render the shared real dashboard content
+                  (see app/pages/_shared/home-dashboard.tsx and data-overview.tsx) ── */}
+              <main className="flex flex-1 flex-col">
+                <HomeTabPanels />
+              </main>
+            </Tabs>
+          );
+        }
+
+        return (
+          <div className="flex flex-1">
+            {iconRail}
+
+            {/* ── Contextual sidebar: selected section's children (nav chrome - not pixel-matched) ── */}
+            <aside className="hidden w-[286px] shrink-0 flex-col justify-between overflow-y-auto border-r border-secondary bg-secondary p-4 lg:flex">
+              <div className="flex flex-col gap-1">
+                <p className="mb-3 text-xs font-semibold tracking-wide text-quaternary uppercase">{activeSectionNode.label}</p>
+                {activeSectionNode.items?.map((item) => <NavTree key={item.label} node={item} depth={1} />)}
+              </div>
+              <div className="flex flex-col gap-1.5 border-t border-secondary pt-4 text-[10px] font-semibold tracking-wide text-quaternary uppercase">
+                {registeredUserFooterLinks.map((link) => (
+                  <p key={link}>{link}</p>
+                ))}
+              </div>
+            </aside>
+
+            {/* ── Main content: Projects has this screen's own content - every other section is
+                an honest placeholder (see SectionPlaceholder above) until it's actually scoped ── */}
+            <main className="flex flex-1 flex-col">
+              {activeSection === "Projects" ? <ProjectListContent /> : <SectionPlaceholder node={activeSectionNode} />}
+            </main>
+          </div>
+        );
+      })()}
     </div>
   );
 }

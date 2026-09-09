@@ -10,9 +10,9 @@ import { Avatar } from "@/components/base/avatar/avatar";
 import { Tooltip, TooltipTrigger } from "@/components/base/tooltip/tooltip";
 import { Popover } from "@/components/base/select/popover";
 import { Breadcrumb } from "@/components/scaffold/breadcrumb";
-import { HomeTabPanels } from "@/app/projects/_shared/home-tab-panels";
-import { ProjectListContent } from "@/app/projects/_shared/project-list-content";
-import { GlobalProjectSearch } from "@/app/projects/_shared/global-search";
+import { HomeTabPanels } from "@/app/pages/_shared/home-tab-panels";
+import { ProjectListContent } from "@/app/pages/_shared/project-list-content";
+import { GlobalProjectSearch } from "@/app/pages/_shared/global-search";
 import { useFeatureAccess } from "@/lib/use-feature-access";
 import { registeredUserNav, registeredUserAccountMenu, registeredUserFooterLinks, type NavNode } from "@/lib/registered-user-nav";
 import { cx } from "@/utils/cx";
@@ -39,12 +39,12 @@ const sectionIcons: Record<string, FC<{ className?: string }>> = {
 // here have been trimmed to just the KPI row. Decided directly by the user: a registered user has
 // limited scope on this platform, so the dashboard's job is to surface what's actually theirs to
 // act on, not to be a smaller version of an org-wide reporting surface - see CONTEXT.md's
-// "Registered User dashboard scope". See app/projects/dashboard/option-2 for the same idea on the
+// "Registered User dashboard scope". See app/pages/dashboard/option-2 for the same idea on the
 // top-nav shell.
 //
 // Figma source: https://www.figma.com/design/SQ58QgwP9Xz0uo3tBpuf6e/DEW-Toolkit--version-1.0-?node-id=103-105
 // "SCREEN" (BioData SA dashboard shell, 1440px) - an exploratory layout per CONTEXT.md's
-// "Exploratory page layouts (/pages/<page-name>, /projects/<page-name>/<variant>)" section.
+// "Exploratory page layouts (/pages/<page-name>, /pages/<page-name>/<variant>)" section.
 // Unlike a /test-* screen (a fixed, already-decided Figma frame), this explores what the
 // dashboard could look like while the surrounding IA - primary icon rail, contextual sidebar,
 // breadcrumb - is still undecided, so that chrome is built as simplified structural placeholder
@@ -81,7 +81,7 @@ const CURRENT_KEY = "dashboard";
 function NavTree({ node, depth = 0, defaultOpen = false }: { node: NavNode; depth?: number; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
   const hasChildren = !!node.items?.length;
-  const href = node.key ? `/projects/${node.key}/option-1` : undefined;
+  const href = node.key ? `/pages/${node.key}/option-1` : undefined;
   const isCurrent = !!node.key && node.key === CURRENT_KEY;
   const indent = { paddingLeft: 8 + depth * 12, paddingRight: 8 };
 
@@ -149,7 +149,7 @@ function SectionPlaceholder({ node }: { node: NavNode }) {
           : "This section's content hasn't been scoped yet - only its place in the navigation is decided so far."}
       </p>
       {relatedLink && (
-        <Button color="link-color" size="sm" href={`/projects/${relatedLink.key}/option-1`} iconTrailing={ArrowNarrowRight}>
+        <Button color="link-color" size="sm" href={`/pages/${relatedLink.key}/option-1`} iconTrailing={ArrowNarrowRight}>
           Go to {relatedLink.label}
         </Button>
       )}
@@ -234,90 +234,112 @@ function Dashboard() {
         </div>
       </header>
 
-      {/* Home's two views (My Dashboard / Data Overview) as a real vertical Tabs - the TabList
-          lives in column 2, its TabPanels in column 3, wired together by this one Tabs ancestor
-          (react-aria's Tabs is a context provider, not a DOM-adjacency requirement, so the two
-          halves can sit in separate columns). Inert for every other section - no TabList/TabPanel
-          renders unless Home is active, so it doesn't affect anything else on this page. Placed on
-          column 2 per the user directly - the tabs are a sub-nav choice (which Home view), not
-          column-3 content in their own right. */}
-      <Tabs orientation="vertical" defaultSelectedKey="dashboard" className="flex flex-1">
-        {/* ── Primary icon rail: top-level IA (nav chrome - not pixel-matched) ── */}
-        <aside className="hidden w-20 shrink-0 flex-col items-center gap-1 border-r border-secondary bg-secondary py-4 lg:flex">
-          {registeredUserNav.map((section) => {
-            const Icon = sectionIcons[section.label];
-            const active = section.label === activeSection;
-            return (
-              <Tooltip key={section.label} title={section.label} placement="right">
-                <TooltipTrigger
-                  onPress={() => setActiveSection(section.label)}
-                  className={cx(
-                    "flex size-12 items-center justify-center rounded-lg transition duration-100 ease-linear",
-                    active ? "bg-brand-solid text-white" : "text-quaternary hover:bg-tertiary hover:text-primary",
-                  )}
-                >
-                  {Icon && <Icon className="size-5" />}
-                </TooltipTrigger>
-              </Tooltip>
-            );
-          })}
-        </aside>
+      {/* ── Primary icon rail: top-level IA (nav chrome - not pixel-matched) ── */}
+      {(() => {
+        const iconRail = (
+          <aside className="hidden w-20 shrink-0 flex-col items-center gap-1 border-r border-secondary bg-secondary py-4 lg:flex">
+            {registeredUserNav.map((section) => {
+              const Icon = sectionIcons[section.label];
+              const active = section.label === activeSection;
+              return (
+                <Tooltip key={section.label} title={section.label} placement="right">
+                  <TooltipTrigger
+                    onPress={() => setActiveSection(section.label)}
+                    className={cx(
+                      "flex size-12 items-center justify-center rounded-lg transition duration-100 ease-linear",
+                      active ? "bg-brand-solid text-white" : "text-quaternary hover:bg-tertiary hover:text-primary",
+                    )}
+                  >
+                    {Icon && <Icon className="size-5" />}
+                  </TooltipTrigger>
+                </Tooltip>
+              );
+            })}
+          </aside>
+        );
 
-        {/* ── Contextual sidebar: selected section's children, or Home's My Dashboard/Data
-            Overview tab list (nav chrome - not pixel-matched) ── */}
-        <aside className="hidden w-[286px] shrink-0 flex-col justify-between overflow-y-auto border-r border-secondary bg-secondary p-4 lg:flex">
-          <div className="flex flex-col gap-1">
-            <p className="mb-3 text-xs font-semibold tracking-wide text-quaternary uppercase">{activeSectionNode.label}</p>
-            {activeSection === "Home" ? (
-              <TabList aria-label="Home views" className="flex flex-col gap-0.5">
-                <Tab
-                  id="dashboard"
-                  className={({ isSelected }) =>
-                    cx(
-                      "cursor-pointer rounded-md px-2 py-1 text-sm outline-hidden",
-                      isSelected ? "bg-primary font-medium text-primary shadow-xs ring-1 ring-secondary" : "text-primary hover:text-brand-700",
-                    )
-                  }
-                >
-                  My Dashboard
-                </Tab>
-                <Tab
-                  id="overview"
-                  className={({ isSelected }) =>
-                    cx(
-                      "cursor-pointer rounded-md px-2 py-1 text-sm outline-hidden",
-                      isSelected ? "bg-primary font-medium text-primary shadow-xs ring-1 ring-secondary" : "text-primary hover:text-brand-700",
-                    )
-                  }
-                >
-                  Data Overview
-                </Tab>
-              </TabList>
-            ) : (
-              activeSectionNode.items?.map((item) => <NavTree key={item.label} node={item} depth={1} />)
-            )}
-          </div>
-          <div className="flex flex-col gap-1.5 border-t border-secondary pt-4 text-[10px] font-semibold tracking-wide text-quaternary uppercase">
-            {registeredUserFooterLinks.map((link) => (
-              <p key={link}>{link}</p>
-            ))}
-          </div>
-        </aside>
+        // Home's two views (My Dashboard / Data Overview) get their own Tabs boundary, mounted
+        // only while Home is active - not one Tabs wrapping the whole page permanently. React-aria's
+        // Tabs keeps a single internal collection for its whole lifetime; a Tabs that always exists
+        // while its TabList only mounts once you switch to Home crashes the first time TabList
+        // mounts ("Cannot destructure property 'onAction' ... as it is undefined") - caught on
+        // project-detail/option-1, fixed the same way here since this file has the identical shape.
+        if (activeSection === "Home") {
+          return (
+            <Tabs orientation="vertical" defaultSelectedKey="dashboard" className="flex flex-1">
+              {iconRail}
 
-        {/* ── Main content: Home's tab panels render the real dashboard content (shared with
-            project-list and project-detail, see app/projects/_shared/home-dashboard.tsx and
-            data-overview.tsx) - every other section is an honest placeholder (see
-            SectionPlaceholder above) until it's actually scoped ── */}
-        <main className="flex flex-1 flex-col">
-          {activeSection === "Home" ? (
-            <HomeTabPanels />
-          ) : activeSection === "Projects" ? (
-            <ProjectListContent />
-          ) : (
-            <SectionPlaceholder node={activeSectionNode} />
-          )}
-        </main>
-      </Tabs>
+              {/* ── Contextual sidebar: Home's My Dashboard/Data Overview tab list (nav chrome - not pixel-matched) ── */}
+              <aside className="hidden w-[286px] shrink-0 flex-col justify-between overflow-y-auto border-r border-secondary bg-secondary p-4 lg:flex">
+                <div className="flex flex-col gap-1">
+                  <p className="mb-3 text-xs font-semibold tracking-wide text-quaternary uppercase">{activeSectionNode.label}</p>
+                  <TabList aria-label="Home views" className="flex flex-col gap-0.5">
+                    <Tab
+                      id="dashboard"
+                      className={({ isSelected }) =>
+                        cx(
+                          "cursor-pointer rounded-md px-2 py-1 text-sm outline-hidden",
+                          isSelected ? "bg-primary font-medium text-primary shadow-xs ring-1 ring-secondary" : "text-primary hover:text-brand-700",
+                        )
+                      }
+                    >
+                      My Dashboard
+                    </Tab>
+                    <Tab
+                      id="overview"
+                      className={({ isSelected }) =>
+                        cx(
+                          "cursor-pointer rounded-md px-2 py-1 text-sm outline-hidden",
+                          isSelected ? "bg-primary font-medium text-primary shadow-xs ring-1 ring-secondary" : "text-primary hover:text-brand-700",
+                        )
+                      }
+                    >
+                      Data Dashboard
+                    </Tab>
+                  </TabList>
+                </div>
+                <div className="flex flex-col gap-1.5 border-t border-secondary pt-4 text-[10px] font-semibold tracking-wide text-quaternary uppercase">
+                  {registeredUserFooterLinks.map((link) => (
+                    <p key={link}>{link}</p>
+                  ))}
+                </div>
+              </aside>
+
+              {/* ── Main content: Home's tab panels render the real dashboard content (shared
+                  with project-list and project-detail, see app/pages/_shared/home-dashboard.tsx
+                  and data-overview.tsx) ── */}
+              <main className="flex flex-1 flex-col">
+                <HomeTabPanels />
+              </main>
+            </Tabs>
+          );
+        }
+
+        return (
+          <div className="flex flex-1">
+            {iconRail}
+
+            {/* ── Contextual sidebar: selected section's children (nav chrome - not pixel-matched) ── */}
+            <aside className="hidden w-[286px] shrink-0 flex-col justify-between overflow-y-auto border-r border-secondary bg-secondary p-4 lg:flex">
+              <div className="flex flex-col gap-1">
+                <p className="mb-3 text-xs font-semibold tracking-wide text-quaternary uppercase">{activeSectionNode.label}</p>
+                {activeSectionNode.items?.map((item) => <NavTree key={item.label} node={item} depth={1} />)}
+              </div>
+              <div className="flex flex-col gap-1.5 border-t border-secondary pt-4 text-[10px] font-semibold tracking-wide text-quaternary uppercase">
+                {registeredUserFooterLinks.map((link) => (
+                  <p key={link}>{link}</p>
+                ))}
+              </div>
+            </aside>
+
+            {/* ── Main content: Projects has this screen's own content - every other section is
+                an honest placeholder (see SectionPlaceholder above) until it's actually scoped ── */}
+            <main className="flex flex-1 flex-col">
+              {activeSection === "Projects" ? <ProjectListContent /> : <SectionPlaceholder node={activeSectionNode} />}
+            </main>
+          </div>
+        );
+      })()}
     </div>
   );
 }

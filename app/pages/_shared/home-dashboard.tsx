@@ -1,7 +1,10 @@
 "use client";
 
-import { TrendUp02, ArrowNarrowRight, Plus, Upload01 } from "@untitledui/icons";
+import type { FC } from "react";
+import { Focusable } from "react-aria-components";
+import { TrendUp02, ArrowNarrowRight, Plus, Upload01, Folder, FileLock01, Flag01 } from "@untitledui/icons";
 import { Button } from "@/components/base/buttons/button";
+import { Tooltip } from "@/components/base/tooltip/tooltip";
 import { Badge } from "@/components/base/badges/badges";
 import type { BadgeColor } from "@/components/base/badges/badges";
 
@@ -16,7 +19,7 @@ import type { BadgeColor } from "@/components/base/badges/badges";
 // fixes is specific to option-1's in-place, no-navigation section switching.
 //
 // The "This is where alerts go" banner used to live here, with its own local dismiss state - moved
-// out to app/projects/_shared/home-tab-panels.tsx instead, since it also needs to show on the Data
+// out to app/pages/_shared/home-tab-panels.tsx instead, since it also needs to show on the Data
 // Overview tab and dismissing it on either tab must dismiss it on both (one shared piece of state
 // above both tab panels, not two independent copies) - flagged directly by the user.
 //
@@ -59,6 +62,34 @@ function KpiStat({
         {action && <ArrowNarrowRight className="size-3.5 text-quaternary" />}
       </div>
     </div>
+  );
+}
+
+// A quick-actions button pointing at a real, already-built destination.
+function QuickAction({ icon, label, href }: { icon: FC<{ className?: string }>; label: string; href: string }) {
+  return (
+    <Button color="secondary" iconLeading={icon} href={href}>
+      {label}
+    </Button>
+  );
+}
+
+// A quick-actions button for an operation that's scoped (it's a real item in
+// lib/registered-user-nav.ts) but doesn't have a page yet - disabled with a tooltip explaining why,
+// rather than either a dead link or leaving it out of the row entirely. See dashboard/option-2's
+// copy of this pattern for why the tooltip is wired to a `Focusable` wrapper instead of straight to
+// the disabled button (its own hover is suppressed while disabled).
+function DisabledQuickAction({ icon, label, note }: { icon: FC<{ className?: string }>; label: string; note: string }) {
+  return (
+    <Tooltip title={note}>
+      <Focusable>
+        <span className="inline-flex">
+          <Button color="secondary" iconLeading={icon} isDisabled>
+            {label}
+          </Button>
+        </span>
+      </Focusable>
+    </Tooltip>
   );
 }
 
@@ -127,7 +158,7 @@ const dashboardTasks: {
     status: "Draft",
     statusColor: "gray",
     actionLabel: "Continue",
-    actionHref: "/projects/project-detail/option-1",
+    actionHref: "/pages/project-detail/option-1",
   },
 ];
 
@@ -144,6 +175,9 @@ export function HomeDashboardContent() {
         <div className="flex flex-wrap items-center gap-2">
           <Button color="secondary" iconLeading={Plus}>Add project</Button>
           <Button color="secondary" iconLeading={Upload01}>Upload dataset</Button>
+          <QuickAction icon={Folder} label="Manage projects & datasets" href="/pages/project-list/option-1" />
+          <DisabledQuickAction icon={FileLock01} label="Request new DLA" note="Coming soon - the DLA request flow isn't built yet" />
+          <DisabledQuickAction icon={Flag01} label="Nominate a species" note="Coming soon - the nomination flow isn't built yet" />
         </div>
       </div>
 

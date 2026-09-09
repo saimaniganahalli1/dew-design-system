@@ -6,7 +6,7 @@ import type { Key } from "react-aria-components";
 import { SearchMd } from "@untitledui/icons";
 import { ComboBox } from "@/components/base/select/combobox";
 import { SelectItem } from "@/components/base/select/select-item";
-import { searchableProjects } from "@/app/projects/_shared/project-list-content";
+import { searchableProjects } from "@/app/pages/_shared/project-list-content";
 
 // The header search, made real - scoped to projects only for now, per the user directly ("just
 // for projects"). Datasets and species stay in the placeholder text (the brief always described
@@ -33,7 +33,7 @@ export function GlobalProjectSearch() {
       items={filtered}
       onSelectionChange={(id: Key | null) => {
         const project = searchableProjects.find((p) => p.id === id);
-        router.push(project?.href ?? "/projects/project-list/option-1");
+        router.push(project?.href ?? "/pages/project-list/option-1");
       }}
     >
       {(item) => <SelectItem id={item.id} label={item.label} supportingText={item.supportingText} />}

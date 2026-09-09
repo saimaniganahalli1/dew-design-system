@@ -29,8 +29,8 @@ import { Popover } from "@/components/base/select/popover";
 import { BadgeWithDot } from "@/components/base/badges/badges";
 import { TreeView } from "@/components/application/tree-view/tree-view";
 import { Breadcrumb } from "@/components/scaffold/breadcrumb";
-import { HomeTabPanels } from "@/app/projects/_shared/home-tab-panels";
-import { GlobalProjectSearch } from "@/app/projects/_shared/global-search";
+import { HomeTabPanels } from "@/app/pages/_shared/home-tab-panels";
+import { GlobalProjectSearch } from "@/app/pages/_shared/global-search";
 import { useFeatureAccess } from "@/lib/use-feature-access";
 import { registeredUserNav, registeredUserAccountMenu, registeredUserFooterLinks, type NavNode } from "@/lib/registered-user-nav";
 import { cx } from "@/utils/cx";
@@ -76,7 +76,7 @@ const sectionIcons: Record<string, FC<{ className?: string }>> = {
 function NavTree({ node, depth = 0, defaultOpen = false }: { node: NavNode; depth?: number; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
   const hasChildren = !!node.items?.length;
-  const href = node.key ? `/projects/${node.key}/option-1` : undefined;
+  const href = node.key ? `/pages/${node.key}/option-1` : undefined;
   const indent = { paddingLeft: depth * 12 };
 
   if (!hasChildren) {
@@ -119,7 +119,7 @@ function NavTree({ node, depth = 0, defaultOpen = false }: { node: NavNode; dept
 // Same 4 example projects as project-list/option-1 - only this one has a real detail page, so it's
 // the only clickable row, same "only wire what has a real page" convention used everywhere else.
 const switcherProjects = [
-  { name: "Adelaide Hills Bushland Survey", href: "/projects/project-detail/option-1" },
+  { name: "Adelaide Hills Bushland Survey", href: "/pages/project-detail/option-1" },
   { name: "Coorong Wetlands Bird Count" },
   { name: "Flinders Ranges Reptile Atlas" },
   { name: "Kangaroo Island Recovery Monitoring" },
@@ -177,7 +177,7 @@ function ProjectSwitcher() {
           </div>
           <div className="mt-1 shrink-0 border-t border-secondary pt-1">
             <Link
-              href="/projects/project-list/option-1"
+              href="/pages/project-list/option-1"
               onClick={() => setOpen(false)}
               className="block rounded-md px-2 py-2 text-sm font-medium text-brand-700 hover:bg-secondary"
             >
@@ -231,7 +231,7 @@ function SectionPlaceholder({ node }: { node: NavNode }) {
           : "This section's content hasn't been scoped yet - only its place in the navigation is decided so far."}
       </p>
       {relatedLink && (
-        <Button color="link-color" size="sm" href={`/projects/${relatedLink.key}/option-1`} iconTrailing={ArrowNarrowRight}>
+        <Button color="link-color" size="sm" href={`/pages/${relatedLink.key}/option-1`} iconTrailing={ArrowNarrowRight}>
           Go to {relatedLink.label}
         </Button>
       )}
@@ -315,196 +315,233 @@ function ProjectDetail() {
         </div>
       </header>
 
-      {/* Home's two views (My Dashboard / Data Overview) as a real vertical Tabs - see
-          dashboard/option-1's comment for the full rationale (TabList in column 2, TabPanel in
-          column 3, one Tabs ancestor wiring them together). Inert for every other section. */}
-      <Tabs orientation="vertical" defaultSelectedKey="dashboard" className="flex flex-1">
-        {/* ── Primary icon rail: top-level IA (nav chrome - not pixel-matched) ── */}
-        <aside className="hidden w-20 shrink-0 flex-col items-center gap-1 border-r border-secondary bg-secondary py-4 lg:flex">
-          {registeredUserNav.map((section) => {
-            const Icon = sectionIcons[section.label];
-            const active = section.label === activeSection;
-            return (
-              <Tooltip key={section.label} title={section.label} placement="right">
-                <TooltipTrigger
-                  onPress={() => setActiveSection(section.label)}
-                  className={cx(
-                    "flex size-12 items-center justify-center rounded-lg transition duration-100 ease-linear",
-                    active ? "bg-brand-solid text-white" : "text-quaternary hover:bg-tertiary hover:text-primary",
-                  )}
-                >
-                  {Icon && <Icon className="size-5" />}
-                </TooltipTrigger>
-              </Tooltip>
-            );
-          })}
-        </aside>
+      {/* ── Primary icon rail: top-level IA (nav chrome - not pixel-matched) ── */}
+      {(() => {
+        const iconRail = (
+          <aside className="hidden w-20 shrink-0 flex-col items-center gap-1 border-r border-secondary bg-secondary py-4 lg:flex">
+            {registeredUserNav.map((section) => {
+              const Icon = sectionIcons[section.label];
+              const active = section.label === activeSection;
+              return (
+                <Tooltip key={section.label} title={section.label} placement="right">
+                  <TooltipTrigger
+                    onPress={() => setActiveSection(section.label)}
+                    className={cx(
+                      "flex size-12 items-center justify-center rounded-lg transition duration-100 ease-linear",
+                      active ? "bg-brand-solid text-white" : "text-quaternary hover:bg-tertiary hover:text-primary",
+                    )}
+                  >
+                    {Icon && <Icon className="size-5" />}
+                  </TooltipTrigger>
+                </Tooltip>
+              );
+            })}
+          </aside>
+        );
 
-        {/* ── Contextual sidebar: this project's nested-records tree when on Projects, otherwise
-            the selected section's children (nav chrome - not pixel-matched) ── */}
-        <aside className="hidden w-[286px] shrink-0 flex-col justify-between overflow-y-auto border-r border-secondary bg-secondary p-4 lg:flex">
-          <div className="flex flex-col gap-1">
-            {activeSection === "Projects" && (
-              <Link
-                href="/projects/project-list/option-1"
-                className="mb-3 flex items-center gap-1.5 text-sm font-medium text-tertiary hover:text-primary"
-              >
-                <ArrowNarrowLeft className="size-4" />
-                Back to projects
-              </Link>
-            )}
-            <p className="mb-3 text-xs font-semibold tracking-wide text-quaternary uppercase">
-              {activeSection === "Projects" ? "Adelaide Hills Bushland Survey" : activeSectionNode.label}
-            </p>
-            {activeSection === "Home" ? (
-              <TabList aria-label="Home views" className="flex flex-col gap-0.5">
-                <Tab
-                  id="dashboard"
-                  className={({ isSelected }) =>
-                    cx(
-                      "cursor-pointer rounded-md px-2 py-1 text-sm outline-hidden",
-                      isSelected ? "bg-primary font-medium text-primary shadow-xs ring-1 ring-secondary" : "text-primary hover:text-brand-700",
-                    )
-                  }
-                >
-                  My Dashboard
-                </Tab>
-                <Tab
-                  id="overview"
-                  className={({ isSelected }) =>
-                    cx(
-                      "cursor-pointer rounded-md px-2 py-1 text-sm outline-hidden",
-                      isSelected ? "bg-primary font-medium text-primary shadow-xs ring-1 ring-secondary" : "text-primary hover:text-brand-700",
-                    )
-                  }
-                >
-                  Data Overview
-                </Tab>
-              </TabList>
-            ) : activeSection === "Projects" ? (
-              <TreeView
-                aria-label="Adelaide Hills Bushland Survey records"
-                showConnectors
-                defaultExpandedKeys={["site", "visit"]}
-                className="w-full"
-              >
-                <TreeView.Item id="site" textValue="Site SU00501">
-                  <TreeView.ItemContent icon={Folder}>Site SU00501</TreeView.ItemContent>
-                  <TreeView.Item id="obs-nonbiotic" textValue="Observation OBS094 · Nonbiotic">
-                    <TreeView.ItemContent icon={File02}>Observation OBS094 · Nonbiotic</TreeView.ItemContent>
-                  </TreeView.Item>
-                  <TreeView.Item id="obs-community" textValue="Observation OBS094 · Community">
-                    <TreeView.ItemContent icon={File02}>Observation OBS094 · Community</TreeView.ItemContent>
-                  </TreeView.Item>
-                  <TreeView.Item id="obs-094" textValue="Observation OBS094">
-                    <TreeView.ItemContent icon={File02}>Observation OBS094</TreeView.ItemContent>
-                  </TreeView.Item>
-                  <TreeView.Item id="occ-individual" textValue="Occurrence OBS094 · Individual">
-                    <TreeView.ItemContent icon={File02}>Occurrence OBS094 · Individual</TreeView.ItemContent>
-                  </TreeView.Item>
-                  <TreeView.Item id="occ-population" textValue="Occurrence OBS094 · Population">
-                    <TreeView.ItemContent icon={File02}>Occurrence OBS094 · Population</TreeView.ItemContent>
-                  </TreeView.Item>
-                  <TreeView.Item id="visit" textValue="Visit VU00501">
-                    <TreeView.ItemContent icon={Folder}>Visit VU00501</TreeView.ItemContent>
-                    <TreeView.Item id="visit-obs" textValue="Observation OBS095">
-                      <TreeView.ItemContent icon={File02}>Observation OBS095</TreeView.ItemContent>
+        // Home's two views (My Dashboard / Data Overview) get their own Tabs boundary, mounted
+        // only while Home is active - not one Tabs wrapping the whole page permanently. React-aria's
+        // Tabs keeps a single internal collection for its whole lifetime; wrapping the entire
+        // three-column row in a permanent Tabs while TabList only mounted conditionally (once you
+        // switched to Home) broke that - a real runtime crash the first time TabList mounted
+        // ("Cannot destructure property 'onAction' ... as it is undefined"). Scoping Tabs to just
+        // this branch means TabList and TabPanel always mount and unmount together.
+        if (activeSection === "Home") {
+          return (
+            <Tabs orientation="vertical" defaultSelectedKey="dashboard" className="flex flex-1">
+              {iconRail}
+
+              {/* ── Contextual sidebar: Home's My Dashboard/Data Overview tab list (nav chrome - not pixel-matched) ── */}
+              <aside className="hidden w-[286px] shrink-0 flex-col justify-between overflow-y-auto border-r border-secondary bg-secondary p-4 lg:flex">
+                <div className="flex flex-col gap-1">
+                  <p className="mb-3 text-xs font-semibold tracking-wide text-quaternary uppercase">{activeSectionNode.label}</p>
+                  <TabList aria-label="Home views" className="flex flex-col gap-0.5">
+                    <Tab
+                      id="dashboard"
+                      className={({ isSelected }) =>
+                        cx(
+                          "cursor-pointer rounded-md px-2 py-1 text-sm outline-hidden",
+                          isSelected ? "bg-primary font-medium text-primary shadow-xs ring-1 ring-secondary" : "text-primary hover:text-brand-700",
+                        )
+                      }
+                    >
+                      My Dashboard
+                    </Tab>
+                    <Tab
+                      id="overview"
+                      className={({ isSelected }) =>
+                        cx(
+                          "cursor-pointer rounded-md px-2 py-1 text-sm outline-hidden",
+                          isSelected ? "bg-primary font-medium text-primary shadow-xs ring-1 ring-secondary" : "text-primary hover:text-brand-700",
+                        )
+                      }
+                    >
+                      Data Dashboard
+                    </Tab>
+                  </TabList>
+                </div>
+                <div className="flex flex-col gap-1.5 border-t border-secondary pt-4 text-[10px] font-semibold tracking-wide text-quaternary uppercase">
+                  {registeredUserFooterLinks.map((link) => (
+                    <p key={link}>{link}</p>
+                  ))}
+                </div>
+              </aside>
+
+              {/* ── Main content: Home's tab panels render the shared real dashboard content
+                  (see app/pages/_shared/home-dashboard.tsx and data-overview.tsx) ── */}
+              <main className="flex flex-1 flex-col overflow-y-auto">
+                <HomeTabPanels />
+              </main>
+            </Tabs>
+          );
+        }
+
+        return (
+          <div className="flex flex-1">
+            {iconRail}
+
+            {/* ── Contextual sidebar: this project's nested-records tree when on Projects,
+                otherwise the selected section's children (nav chrome - not pixel-matched) ── */}
+            <aside className="hidden w-[286px] shrink-0 flex-col justify-between overflow-y-auto border-r border-secondary bg-secondary p-4 lg:flex">
+              <div className="flex flex-col gap-1">
+                <p className="mb-3 text-xs font-semibold tracking-wide text-quaternary uppercase">
+                  {activeSection === "Projects" ? "Adelaide Hills Bushland Survey" : activeSectionNode.label}
+                </p>
+                {activeSection === "Projects" ? (
+                  <TreeView
+                    aria-label="Adelaide Hills Bushland Survey records"
+                    showConnectors
+                    defaultExpandedKeys={["site", "visit"]}
+                    className="w-full"
+                  >
+                    <TreeView.Item id="site" textValue="Site SU00501">
+                      <TreeView.ItemContent icon={Folder}>Site SU00501</TreeView.ItemContent>
+                      <TreeView.Item id="obs-nonbiotic" textValue="Observation OBS094 · Nonbiotic">
+                        <TreeView.ItemContent icon={File02}>Observation OBS094 · Nonbiotic</TreeView.ItemContent>
+                      </TreeView.Item>
+                      <TreeView.Item id="obs-community" textValue="Observation OBS094 · Community">
+                        <TreeView.ItemContent icon={File02}>Observation OBS094 · Community</TreeView.ItemContent>
+                      </TreeView.Item>
+                      <TreeView.Item id="obs-094" textValue="Observation OBS094">
+                        <TreeView.ItemContent icon={File02}>Observation OBS094</TreeView.ItemContent>
+                      </TreeView.Item>
+                      <TreeView.Item id="occ-individual" textValue="Occurrence OBS094 · Individual">
+                        <TreeView.ItemContent icon={File02}>Occurrence OBS094 · Individual</TreeView.ItemContent>
+                      </TreeView.Item>
+                      <TreeView.Item id="occ-population" textValue="Occurrence OBS094 · Population">
+                        <TreeView.ItemContent icon={File02}>Occurrence OBS094 · Population</TreeView.ItemContent>
+                      </TreeView.Item>
+                      <TreeView.Item id="visit" textValue="Visit VU00501">
+                        <TreeView.ItemContent icon={Folder}>Visit VU00501</TreeView.ItemContent>
+                        <TreeView.Item id="visit-obs" textValue="Observation OBS095">
+                          <TreeView.ItemContent icon={File02}>Observation OBS095</TreeView.ItemContent>
+                        </TreeView.Item>
+                      </TreeView.Item>
+                      <TreeView.Item id="transect" textValue="Transect TR00501">
+                        <TreeView.ItemContent icon={File02}>Transect TR00501</TreeView.ItemContent>
+                      </TreeView.Item>
+                      <TreeView.Item id="quadrat" textValue="Quadrat QR00501">
+                        <TreeView.ItemContent icon={File02}>Quadrat QR00501</TreeView.ItemContent>
+                      </TreeView.Item>
+                      <TreeView.Item id="block" textValue="Block BK00501">
+                        <TreeView.ItemContent icon={File02}>Block BK00501</TreeView.ItemContent>
+                      </TreeView.Item>
+                      <TreeView.Item id="ramble" textValue="Ramble RMB00501">
+                        <TreeView.ItemContent icon={File02}>Ramble RMB00501</TreeView.ItemContent>
+                      </TreeView.Item>
+                      <TreeView.Item id="trap" textValue="Trap TRP00501">
+                        <TreeView.ItemContent icon={File02}>Trap TRP00501</TreeView.ItemContent>
+                      </TreeView.Item>
+                      <TreeView.Item id="custom-event" textValue="Custom Event">
+                        <TreeView.ItemContent icon={File02}>Custom Event</TreeView.ItemContent>
+                      </TreeView.Item>
                     </TreeView.Item>
-                  </TreeView.Item>
-                  <TreeView.Item id="transect" textValue="Transect TR00501">
-                    <TreeView.ItemContent icon={File02}>Transect TR00501</TreeView.ItemContent>
-                  </TreeView.Item>
-                  <TreeView.Item id="quadrat" textValue="Quadrat QR00501">
-                    <TreeView.ItemContent icon={File02}>Quadrat QR00501</TreeView.ItemContent>
-                  </TreeView.Item>
-                  <TreeView.Item id="block" textValue="Block BK00501">
-                    <TreeView.ItemContent icon={File02}>Block BK00501</TreeView.ItemContent>
-                  </TreeView.Item>
-                  <TreeView.Item id="ramble" textValue="Ramble RMB00501">
-                    <TreeView.ItemContent icon={File02}>Ramble RMB00501</TreeView.ItemContent>
-                  </TreeView.Item>
-                  <TreeView.Item id="trap" textValue="Trap TRP00501">
-                    <TreeView.ItemContent icon={File02}>Trap TRP00501</TreeView.ItemContent>
-                  </TreeView.Item>
-                  <TreeView.Item id="custom-event" textValue="Custom Event">
-                    <TreeView.ItemContent icon={File02}>Custom Event</TreeView.ItemContent>
-                  </TreeView.Item>
-                </TreeView.Item>
-              </TreeView>
-            ) : (
-              activeSectionNode.items?.map((item) => <NavTree key={item.label} node={item} depth={1} />)
-            )}
+                  </TreeView>
+                ) : (
+                  activeSectionNode.items?.map((item) => <NavTree key={item.label} node={item} depth={1} />)
+                )}
+              </div>
+              <div className="flex flex-col gap-1.5 border-t border-secondary pt-4 text-[10px] font-semibold tracking-wide text-quaternary uppercase">
+                {registeredUserFooterLinks.map((link) => (
+                  <p key={link}>{link}</p>
+                ))}
+              </div>
+            </aside>
+
+            {/* ── Main content: Projects has this screen's own content - every other section is an
+                honest placeholder (see SectionPlaceholder above) until it's actually scoped ── */}
+            <main className="flex flex-1 flex-col overflow-y-auto">
+              {activeSection === "Projects" ? (
+                <>
+                  {/* "Back to projects" is column 3's own content, above everything else here -
+                      not spanning the nav columns (icon rail, contextual sidebar). */}
+                  <div className="p-6 pb-0">
+                    <Link
+                      href="/pages/project-list/option-1"
+                      className="flex w-fit items-center gap-1.5 text-sm font-medium text-tertiary hover:text-primary"
+                    >
+                      <ArrowNarrowLeft className="size-4" />
+                      Back to projects
+                    </Link>
+                  </div>
+
+                  <div className="flex flex-col gap-1 p-6 pb-0">
+                    <p className="text-xs font-semibold tracking-wide text-quaternary uppercase">Project</p>
+                    <p className="text-2xl font-medium text-primary">Adelaide Hills Bushland Survey</p>
+                  </div>
+
+                  <div className="flex flex-wrap items-start gap-8 border-b border-secondary p-6">
+                    <MetaField label="Project ID">BD-5039</MetaField>
+                    <MetaField label="Start Date">3 Feb 2025</MetaField>
+                    <MetaField label="End Date">—</MetaField>
+                    <MetaField label="Status">
+                      <BadgeWithDot size="sm" color="success">Active</BadgeWithDot>
+                    </MetaField>
+                    <MetaField label="Published by">Adelaide Hills Landcare</MetaField>
+                  </div>
+
+                  <div className="flex flex-col gap-4 p-6">
+                    <DetailSection title="Project Details">
+                      <DetailRow label="Project No" value="BD-5039" />
+                      <DetailRow label="Short Title (Display Name)" value="Adelaide Hills Bushland Survey" />
+                      <DetailRow
+                        label="Full Project Name"
+                        value="Ongoing flora and fauna monitoring across the Adelaide Hills reserve network, tracking indicator species before and after prescribed burns."
+                      />
+                      <DetailRow label="Start Date" value="3 Feb 2025" />
+                      <DetailRow label="End Date" value="—" />
+                      <DetailRow label="Attached Resources" value="04" />
+                      <div className="flex flex-wrap gap-8 border-t border-secondary pt-4">
+                        <MetaField label="Events">6</MetaField>
+                        <MetaField label="Occurrences">18</MetaField>
+                        <MetaField label="Observations">42</MetaField>
+                      </div>
+                    </DetailSection>
+
+                    <DetailSection title="Overview">
+                      <div className="flex flex-col gap-2">
+                        <p className="text-xs font-semibold tracking-wide text-quaternary uppercase">Abstract</p>
+                        <p className={cx("text-sm text-secondary", !abstractExpanded && "line-clamp-3")}>{abstract}</p>
+                        <Button color="link-color" size="sm" className="self-start" onClick={() => setAbstractExpanded((e) => !e)}>
+                          {abstractExpanded ? "Show less" : "Read more"}
+                        </Button>
+                      </div>
+                      <div className="flex flex-col gap-2 border-t border-secondary pt-4">
+                        <p className="text-xs font-semibold tracking-wide text-quaternary uppercase">Geographic scope</p>
+                        <div className="flex h-48 items-center justify-center rounded-lg bg-secondary">
+                          <p className="text-sm text-primary">Map view</p>
+                        </div>
+                      </div>
+                    </DetailSection>
+                  </div>
+                </>
+              ) : (
+                <SectionPlaceholder node={activeSectionNode} />
+              )}
+            </main>
           </div>
-          <div className="flex flex-col gap-1.5 border-t border-secondary pt-4 text-[10px] font-semibold tracking-wide text-quaternary uppercase">
-            {registeredUserFooterLinks.map((link) => (
-              <p key={link}>{link}</p>
-            ))}
-          </div>
-        </aside>
-
-        {/* ── Main content: Projects has this screen's own content, Home renders the shared real
-            dashboard content (see app/projects/_shared/home-dashboard.tsx) - every other section
-            is an honest placeholder (see SectionPlaceholder above) until it's actually scoped ── */}
-        <main className="flex flex-1 flex-col overflow-y-auto">
-          {activeSection === "Home" ? (
-            <HomeTabPanels />
-          ) : activeSection === "Projects" ? (
-            <>
-              <div className="flex flex-col gap-1 p-6 pb-0">
-                <p className="text-xs font-semibold tracking-wide text-quaternary uppercase">Project</p>
-                <p className="text-2xl font-medium text-primary">Adelaide Hills Bushland Survey</p>
-              </div>
-
-              <div className="flex flex-wrap items-start gap-8 border-b border-secondary p-6">
-                <MetaField label="Project ID">BD-5039</MetaField>
-                <MetaField label="Start Date">3 Feb 2025</MetaField>
-                <MetaField label="End Date">—</MetaField>
-                <MetaField label="Status">
-                  <BadgeWithDot size="sm" color="success">Active</BadgeWithDot>
-                </MetaField>
-                <MetaField label="Published by">Adelaide Hills Landcare</MetaField>
-              </div>
-
-              <div className="flex flex-col gap-4 p-6">
-                <DetailSection title="Project Details">
-                  <DetailRow label="Project No" value="BD-5039" />
-                  <DetailRow label="Short Title (Display Name)" value="Adelaide Hills Bushland Survey" />
-                  <DetailRow
-                    label="Full Project Name"
-                    value="Ongoing flora and fauna monitoring across the Adelaide Hills reserve network, tracking indicator species before and after prescribed burns."
-                  />
-                  <DetailRow label="Start Date" value="3 Feb 2025" />
-                  <DetailRow label="End Date" value="—" />
-                  <DetailRow label="Attached Resources" value="04" />
-                  <div className="flex flex-wrap gap-8 border-t border-secondary pt-4">
-                    <MetaField label="Events">6</MetaField>
-                    <MetaField label="Occurrences">18</MetaField>
-                    <MetaField label="Observations">42</MetaField>
-                  </div>
-                </DetailSection>
-
-                <DetailSection title="Overview">
-                  <div className="flex flex-col gap-2">
-                    <p className="text-xs font-semibold tracking-wide text-quaternary uppercase">Abstract</p>
-                    <p className={cx("text-sm text-secondary", !abstractExpanded && "line-clamp-3")}>{abstract}</p>
-                    <Button color="link-color" size="sm" className="self-start" onClick={() => setAbstractExpanded((e) => !e)}>
-                      {abstractExpanded ? "Show less" : "Read more"}
-                    </Button>
-                  </div>
-                  <div className="flex flex-col gap-2 border-t border-secondary pt-4">
-                    <p className="text-xs font-semibold tracking-wide text-quaternary uppercase">Geographic scope</p>
-                    <div className="flex h-48 items-center justify-center rounded-lg bg-secondary">
-                      <p className="text-sm text-primary">Map view</p>
-                    </div>
-                  </div>
-                </DetailSection>
-              </div>
-            </>
-          ) : (
-            <SectionPlaceholder node={activeSectionNode} />
-          )}
-        </main>
-      </Tabs>
+        );
+      })()}
     </div>
   );
 }

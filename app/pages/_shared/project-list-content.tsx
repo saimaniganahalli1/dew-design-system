@@ -8,7 +8,7 @@ import { Button } from "@/components/base/buttons/button";
 // The real Projects list content - shared by every option-1 sidebar shell (dashboard,
 // project-list, project-detail) so clicking the Projects icon always shows this, the same
 // "content is real, not a placeholder redirect" fix already applied to Home
-// (see app/projects/_shared/home-dashboard.tsx). project-detail is the one exception: its
+// (see app/pages/_shared/home-dashboard.tsx). project-detail is the one exception: its
 // "Projects" section shows one project's own detail (what the screen exists to do), not this list
 // - that's a deliberate difference, not an oversight, since project-detail is reached by drilling
 // into a specific project row, not by browsing the category.
@@ -78,7 +78,7 @@ export function ProjectListContent() {
       <div className="flex flex-col gap-4 p-6">
         <ProjectRow
           name="Adelaide Hills Bushland Survey"
-          href="/projects/project-detail/option-1"
+          href="/pages/project-detail/option-1"
           org="Adelaide Hills Landcare"
           status="Active"
           statusColor="success"
@@ -122,10 +122,10 @@ export function ProjectListContent() {
   );
 }
 
-// Same 4 example projects, exported so the global search (app/projects/_shared/global-search.tsx)
+// Same 4 example projects, exported so the global search (app/pages/_shared/global-search.tsx)
 // can search against exactly this list rather than keeping its own separate copy.
 export const searchableProjects = [
-  { id: "adelaide-hills", label: "Adelaide Hills Bushland Survey", supportingText: "Adelaide Hills Landcare", href: "/projects/project-detail/option-1" },
+  { id: "adelaide-hills", label: "Adelaide Hills Bushland Survey", supportingText: "Adelaide Hills Landcare", href: "/pages/project-detail/option-1" },
   { id: "coorong", label: "Coorong Wetlands Bird Count", supportingText: "Birds SA" },
   { id: "flinders", label: "Flinders Ranges Reptile Atlas", supportingText: "DEW Biodiversity Team" },
   { id: "kangaroo-island", label: "Kangaroo Island Recovery Monitoring", supportingText: "Natural Resources KI" },

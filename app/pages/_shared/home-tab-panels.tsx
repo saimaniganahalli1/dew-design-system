@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { TabPanel } from "react-aria-components";
 import { AlertFullWidth } from "@/components/application/alerts/alerts";
-import { HomeDashboardContent } from "@/app/projects/_shared/home-dashboard";
-import { DataOverviewContent } from "@/app/projects/_shared/data-overview";
+import { HomeDashboardContent } from "@/app/pages/_shared/home-dashboard";
+import { DataOverviewContent } from "@/app/pages/_shared/data-overview";
 
 // Home's two TabPanels (My Dashboard / Data Overview), plus the alert banner both share. The
 // banner used to live inside HomeDashboardContent with its own local dismiss state, so it only
